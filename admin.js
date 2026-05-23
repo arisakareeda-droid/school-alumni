@@ -37,22 +37,22 @@ async function loadAdminData() {
     });
 
     if (allStudents.length === 0) {
-      // 🟢 ปรับให้ช่องcolspanขยายเป็น 5 ช่องให้เต็มหน้าตารางใหม่พอดี
+      // ปรับให้ช่องcolspanขยายเป็น 5 ช่องให้เต็มหน้าตารางใหม่พอดี
       adminStudentTableBody.innerHTML = `<tr><td colspan="5" style="text-align: center;">ยังไม่มีข้อมูลนักเรียนในระบบ</td></tr>`;
       return;
     }
 
     allStudents.forEach((student) => {
       const tr = document.createElement('tr');
-      // 🟢 เพิ่มข้อมูลห้องเรียนตารางช่องที่ 3 ตรงนี้เรียบร้อยแล้ว ข้อมูลจะไม่เยื้องแล้วค่ะ
+      // เพิ่มข้อมูลห้องเรียนตารางช่องที่ 3 ตรงนี้เรียบร้อยแล้ว ข้อมูลจะไม่เยื้องแล้วค่ะ
       tr.innerHTML = `
         <td>${student.studentId || '-'}</td>
         <td>${student.prefix || ''}${student.firstname} ${student.lastname}</td>
         <td>${student.classroom || '-'}</td>
         <td>${student.graduateYear}</td>
         <td>
-          <button class="btn-edit" data-id="${student.id}" style="background:#eab308; color:white; border:none; padding:6px 12px; border-radius:4px; cursor:pointer; margin-right:5px;">✏️ แก้ไข</button>
-          <button class="btn-delete" data-id="${student.id}" style="background:#ef4444; color:white; border:none; padding:6px 12px; border-radius:4px; cursor:pointer;">🗑️ ลบ</button>
+          <button class="btn-edit" data-id="${student.id}" style="background:#eab308; color:white; border:none; padding:6px 12px; border-radius:4px; cursor:pointer; margin-right:5px;">แก้ไข</button>
+          <button class="btn-delete" data-id="${student.id}" style="background:#ef4444; color:white; border:none; padding:6px 12px; border-radius:4px; cursor:pointer;">ลบ</button>
         </td>
       `;
       adminStudentTableBody.appendChild(tr);
@@ -98,7 +98,7 @@ async function uploadImage(file) {
 // 3. ระบบบันทึกข้อมูล (รองรับทั้ง เพิ่มใหม่ และ อัปเดตของเก่า)
 studentForm.addEventListener('submit', async (e) => {
   e.preventDefault();
-  submitBtn.innerText = "⏳ กำลังอัปโหลดรูปและบันทึกข้อมูล...";
+  submitBtn.innerText = "กำลังอัปโหลดรูปและบันทึกข้อมูล...";
   submitBtn.disabled = true;
 
   const file = document.getElementById('diplomaFile').files[0];
@@ -127,16 +127,16 @@ studentForm.addEventListener('submit', async (e) => {
     const docId = document.getElementById('currentDocId').value;
 
     if (isEditing) {
-      // 🟢 โหมดแก้ไขข้อมูลเก่า
+      // โหมดแก้ไขข้อมูลเก่า
       const docRef = doc(db, "students", docId);
       await updateDoc(docRef, studentData);
-      alert("✏️ แก้ไขข้อมูลนักเรียนเรียบร้อยแล้ว!");
+      alert("แก้ไขข้อมูลนักเรียนเรียบร้อยแล้ว!");
       resetForm();
     } else {
-      // 🔵 โหมดเพิ่มข้อมูลใหม่
+      // โหมดเพิ่มข้อมูลใหม่
       if (!imageUrl) studentData.imageUrl = ""; // ถ้าไม่ได้แนบรูป ให้มีค่าเป็นค่าว่าง
       await addDoc(collection(db, "students"), studentData);
-      alert("🎉 เพิ่มข้อมูลศิษย์เก่าสำเร็จ!");
+      alert("เพิ่มข้อมูลศิษย์เก่าสำเร็จ!");
       studentForm.reset();
     }
 
@@ -146,7 +146,7 @@ studentForm.addEventListener('submit', async (e) => {
     console.error("Error saving data: ", error);
     alert("เกิดข้อผิดพลาดในการบันทึกข้อมูล");
   } finally {
-    submitBtn.innerText = "💾 บันทึกข้อมูล";
+    submitBtn.innerText = "บันทึกข้อมูล";
     submitBtn.disabled = false;
   }
 });
@@ -158,8 +158,8 @@ function setupEdit(e) {
   
   if (student) {
     isEditing = true;
-    formTitle.innerText = "✏️ แก้ไขข้อมูลนักเรียน";
-    submitBtn.innerText = "🔄 อัปเดตข้อมูล";
+    formTitle.innerText = "แก้ไขข้อมูลนักเรียน";
+    submitBtn.innerText = "อัปเดตข้อมูล";
     cancelBtn.style.display = "inline-block";
 
     // ดึงค่าเก่าจากฐานข้อมูลมาหยอดลงช่องอินพุตในฟอร์ม
@@ -176,10 +176,10 @@ function setupEdit(e) {
 // 5. ฟังก์ชันลบข้อมูลเมื่อกดปุ่ม "ลบ"
 async function handleDelete(e) {
   const id = e.target.getAttribute('data-id');
-  if (confirm("⚠️ คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลศิษย์เก่าคนนี้? หากลบแล้วจะไม่สามารถกู้คืนได้")) {
+  if (confirm("คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลศิษย์เก่าคนนี้? หากลบแล้วจะไม่สามารถกู้คืนได้")) {
     try {
       await deleteDoc(doc(db, "students", id));
-      alert("🗑️ ลบข้อมูลสำเร็จเรียบร้อย!");
+      alert("ลบข้อมูลสำเร็จเรียบร้อย!");
       loadAdminData();
     } catch (error) {
       console.error("Error deleting document: ", error);
@@ -191,8 +191,8 @@ async function handleDelete(e) {
 // ฟังก์ชันล้างฟอร์มให้กลับมาเป็นโหมดเพิ่มข้อมูลใหม่
 function resetForm() {
   isEditing = false;
-  formTitle.innerText = "➕ เพิ่มข้อมูลนักเรียนใหม่";
-  submitBtn.innerText = "💾 บันทึกข้อมูล";
+  formTitle.innerText = "เพิ่มข้อมูลนักเรียนใหม่";
+  submitBtn.innerText = "บันทึกข้อมูล";
   cancelBtn.style.display = "none";
   studentForm.reset();
   document.getElementById('currentDocId').value = "";
