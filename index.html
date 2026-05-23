@@ -3,44 +3,71 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ระบบฐานข้อมูลศิษย์เก่าโรงเรียน</title>
+  <title>ระบบค้นหาข้อมูลศิษย์เก่า - โรงเรียนบ้านน้ำเค็ม</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-  <header>
-    <div class="container">
-      <h1>🎓 ระบบค้นหาข้อมูลศิษย์เก่า</h1>
-      <p>โรงเรียนของเรา</p>
+  <header class="school-header">
+    <div class="header-container">
+      <img src="logo.png" alt="โลโก้โรงเรียนบ้านน้ำเค็ม" class="school-logo" onerror="this.src='https://placehold.co/100x100/15803d/ffffff?text=Logo'">
+      <div class="title-area">
+        <h2>ระบบบริการค้นหาข้อมูลศิษย์เก่าออนไลน์</h2>
+        <h1>โรงเรียนบ้านน้ำเค็ม</h1>
+        <p>ตำบลบ้านนา อำเภอจะนะ จังหวัดสงขลา</p>
+        <small>สำนักงานเขตพื้นที่การศึกษาประถมศึกษาสงขลา เขต 3</small>
+      </div>
+    </div>
+    <div class="nav-bar">
+      <div class="header-container" style="display: flex; justify-content: space-between; align-items: center;">
+        <span style="color: #fef08a; font-size: 16px; font-weight: 600;">ยินดีต้อนรับสู่ระบบฐานข้อมูลศิษย์เก่า</span>
+        <a href="admin.html" class="admin-link" style="color: white; text-decoration: none; font-size: 16px; font-weight: 600; background: rgba(255,255,255,0.25); padding: 6px 18px; border-radius: 20px; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">🔐 เข้าสู่ระบบแอดมิน</a>
+      </div>
     </div>
   </header>
 
-  <main class="container">
-    <section class="search-box">
-      <input type="text" id="searchInput" placeholder="พิมพ์ชื่อ, นามสกุล หรือปีที่จบ เพื่อค้นหา...">
-      <button id="searchBtn">ค้นหา</button>
+  <main class="main-container" style="display: block; max-width: 1000px;">
+    
+    <section class="card-section" style="margin-bottom: 25px;">
+      <div class="card-header">
+        <h3>🔍 ค้นหารายชื่อศิษย์เก่า</h3>
+      </div>
+      <div class="card-body">
+        <div style="display: flex; gap: 10px;">
+          <input type="text" id="searchInput" placeholder="พิมพ์ชื่อ, นามสกุล หรือปีที่จบ พ.ศ. เพื่อค้นหาข้อมูล...">
+          <button id="searchBtn" class="btn-submit" style="width: auto; padding: 0 25px; white-space: nowrap;">🔍 ค้นหาข้อมูล</button>
+        </div>
+        <small class="form-help" style="margin-top: 8px; display: block;">* สามารถค้นหาพร้อมกันได้ เช่น พิมพ์ชื่อ หรือปี พ.ศ. ที่จบการศึกษา</small>
+      </div>
     </section>
 
-    <section class="result-section">
-      <div class="table-responsive">
-        <table>
+    <section class="card-section">
+      <div class="card-header list-header">
+        <h3>📊 ผลการค้นหาข้อมูลนักเรียน</h3>
+      </div>
+      <div class="card-body table-responsive">
+        <table class="custom-table">
           <thead>
             <tr>
-              <th>รหัสนักเรียน</th>
-              <th>ชื่อ-นามสกุล</th>
-              <th>ปีที่จบ</th>
-              <th>ห้อง</th>
-              <th>ใบจบการศึกษา</th>
+              <th style="width: 15%;">รหัสนักเรียน</th>
+              <th style="width: 35%;">ชื่อ-นามสกุล</th>
+              <th style="width: 15%;">ชั้น/ห้อง</th>
+              <th style="width: 15%;">ปีที่จบ (พ.ศ.)</th>
+              <th style="width: 20%; text-align: center;">ใบจบการศึกษา</th>
             </tr>
           </thead>
           <tbody id="studentTableBody">
             <tr>
-              <td colspan="5" class="text-center" style="text-align: center;">กำลังโหลดข้อมูล...</td>
+              <td colspan="5" style="text-align: center; color: #64748b; padding: 2.5rem;">กำลังโหลดฐานข้อมูลศิษย์เก่า...</td>
             </tr>
           </tbody>
         </table>
       </div>
     </section>
+
   </main>
 
   <script type="module" src="script.js"></script>
