@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>เข้าสู่ระบบแอดมิน - โรงเรียนบ้านน้ำเค็ม</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    /* สไตล์มาตรฐานสำหรับทุกหน้า */
+    body { font-family: 'Sarabun', sans-serif; background-color: #f8fafc; }
+
+    /* จัดการช่องกรอกข้อมูล (Input) */
+    .login-input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 15px;
+      box-sizing: border-box;
+      transition: all 0.2s;
+    }
+    .login-input:focus {
+      outline: none;
+      border-color: #166534;
+      box-shadow: 0 0 0 3px rgba(22, 101, 52, 0.15);
+    }
+
+    /* สไตล์ปุ่มกดทั้งสองปุ่มให้เท่ากันเป๊ะ */
+    .btn-common {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      text-align: center;
+      text-decoration: none;
+      cursor: pointer;
+      box-sizing: border-box;
+      transition: all 0.2s;
+    }
+    
+    /* ปุ่มเข้าสู่ระบบ */
+    .btn-submit { background-color: #166534; color: white; }
+    .btn-submit:hover { background-color: #14532d; }
+
+    /* ปุ่มยกเลิก */
+    .btn-cancel { background-color: #64748b; color: white; }
+    .btn-cancel:hover { background-color: #475569; }
+  </style>
+</head>
+<body>
+
+  <header class="school-header">
+    <div class="header-container">
+      <img src="logo.png" alt="โลโก้โรงเรียนบ้านน้ำเค็ม" class="school-logo" onerror="this.src='https://placehold.co/100x100/15803d/ffffff?text=Logo'">
+      <div class="title-area">
+        <h2 style="margin-bottom: 8px;">ระบบจัดการข้อมูลศิษย์เก่าออนไลน์</h2>
+        <h1 style="margin-bottom: 8px; margin-top: 4px;">โรงเรียนบ้านน้ำเค็ม</h1>
+        <p style="margin-bottom: 4px;">ตำบลบ้านนา อำเภอจะนะ จังหวัดสงขลา</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-container" style="display: block; max-width: 450px; margin: 3rem auto; width: 92%;">
+    <section class="card-section">
+      <div class="card-header" style="background-color: #fef9c3; border-bottom: 2px solid #fef08a; padding: 15px;">
+        <h3 style="color: #854d0e; text-align: center; margin: 0;">เข้าสู่ระบบผู้ดูแลระบบ (Admin)</h3>
+      </div>
+      <div class="card-body" style="padding: 20px;">
+        <form id="loginForm">
+          
+          <div class="form-group" style="margin-bottom: 15px;">
+            <label style="display:block; margin-bottom: 5px;">ชื่อผู้ใช้งาน (Username)</label>
+            <input type="text" id="username" class="login-input" required placeholder="กรอกชื่อผู้ใช้งาน" autocomplete="off">
+          </div>
+
+          <div class="form-group" style="margin-bottom: 20px;">
+            <label style="display:block; margin-bottom: 5px;">รหัสผ่าน (Password)</label>
+            <input type="password" id="password" class="login-input" required placeholder="กรอกรหัสผ่าน">
+          </div>
+
+          <p id="errorMessage" style="color: #ef4444; font-size: 14px; text-align: center; margin-bottom: 15px; display: none;">ชื่อผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง!</p>
+
+          <div class="button-group" style="display: flex; flex-direction: column; gap: 10px;">
+            <button type="submit" class="btn-common btn-submit">เข้าสู่ระบบ</button>
+            <a href="index.html" class="btn-common btn-cancel">ยกเลิกกลับหน้าหลัก</a>
+          </div>
+
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault(); 
+      const user = document.getElementById('username').value;
+      const pass = document.getElementById('password').value;
+      const errorMsg = document.getElementById('errorMessage');
+
+      if (user === 'admin' && pass === 'namkem90130') {
+        sessionStorage.setItem('isAdminLoggedIn', 'true');
+        
+        Swal.fire({
+          icon: 'success',
+          title: 'สำเร็จ!',
+          text: 'เข้าสู่ระบบสำเร็จ',
+          confirmButtonColor: '#166534',
+          timer: 5000,
+          timerProgressBar: true
+        }).then(() => {
+          window.location.href = 'admin.html';
+        });
+
+      } else {
+        errorMsg.style.display = 'block';
+        document.getElementById('password').value = ''; 
+      }
+    });
+  </script>
+
+</body>
+</html>
