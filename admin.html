@@ -14,18 +14,19 @@
   <header class="school-header">
     <div class="header-container">
       <div class="logo-area">
-        <img src="logo" alt="โลโก้โรงเรียนบ้านน้ำเค็ม" class="school-logo" onerror="this.src='https://placehold.co/100x100/15803d/ffffff?text=Logo'">
+        <img src="logo.png" alt="โลโก้โรงเรียนบ้านน้ำเค็ม" class="school-logo" onerror="this.src='https://placehold.co/100x100/15803d/ffffff?text=Logo'">
       </div>
       <div class="title-area">
-        <h2>ระบบจัดการข้อมูลศิษย์เก่าออนไลน์ (Admin)</h2>
-        <h1>โรงเรียนบ้านน้ำเค็ม</h1>
-        <p>ตำบลบ้านนา อำเภอจะนะ จังหวัดสงขลา</p>
+        <h2 style="margin-bottom: 8px;">ระบบจัดการข้อมูลศิษย์เก่าออนไลน์ (Admin)</h2>
+        <h1 style="margin-bottom: 8px; margin-top: 4px;">โรงเรียนบ้านน้ำเค็ม</h1>
+        <p style="margin-bottom: 4px;">ตำบลบ้านนา อำเภอจะนะ จังหวัดสงขลา</p>
         <small>สำนักงานเขตพื้นที่การศึกษาประถมศึกษาสงขลา เขต 3</small>
       </div>
     </div>
-    <div class="nav-bar">
-      <div class="header-container">
-        <a href="index.html" class="back-link">← กลับหน้าหลักค้นหาข้อมูล</a>
+    <div class="nav-bar" style="padding: 10px 0;">
+      <div class="header-container" style="display: flex; justify-content: space-between; align-items: center;">
+        <span style="color: #fef08a; font-size: 16px; font-weight: 600;">ส่วนงานจัดการและบันทึกข้อมูลหลังบ้าน</span>
+        <a href="index.html" class="back-link" style="color: white; text-decoration: none; font-size: 16px; font-weight: 600; background: rgba(255,255,255,0.25); padding: 6px 18px; border-radius: 20px; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">🔍 กลับหน้าหลักค้นหาข้อมูล</a>
       </div>
     </div>
   </header>
@@ -41,12 +42,12 @@
           <input type="hidden" id="currentDocId"> 
           
           <div class="form-group">
-            <label>รหัสนักเรียน:</label>
+            <label>รหัสนักเรียน</label>
             <input type="text" id="studentId" required placeholder="กรอกรหัสนักเรียน">
           </div>
           
           <div class="form-group">
-            <label>คำนำหน้า:</label>
+            <label>คำนำหน้า</label>
             <select id="prefix">
               <option value="เด็กชาย">เด็กชาย</option>
               <option value="เด็กหญิง">เด็กหญิง</option>
@@ -55,27 +56,27 @@
           </div>
 
           <div class="form-group">
-            <label>ชื่อ:</label>
+            <label>ชื่อ</label>
             <input type="text" id="firstname" required placeholder="กรอกชื่อจริง">
           </div>
 
           <div class="form-group">
-            <label>นามสกุล:</label>
+            <label>นามสกุล</label>
             <input type="text" id="lastname" required placeholder="กรอกนามสกุล">
           </div>
 
           <div class="form-group">
-            <label>ปีที่จบการศึกษา (พ.ศ.):</label>
+            <label>ปีที่จบการศึกษา (พ.ศ.)</label>
             <input type="number" id="graduateYear" required placeholder="เช่น 2568">
           </div>
 
           <div class="form-group">
-            <label>ห้อง (เช่น ป.6/1):</label>
+            <label>ห้อง (เช่น ป.6/1)</label>
             <input type="text" id="classroom" placeholder="เช่น ป.6/1">
           </div>
 
           <div class="form-group">
-            <label>แนบรูปใบจบการศึกษา:</label>
+            <label>แนบรูปใบจบการศึกษา</label>
             <div class="file-upload-wrapper">
               <input type="file" id="diplomaFile" accept="image/*">
             </div>
@@ -83,8 +84,8 @@
           </div>
 
           <div class="button-group">
-            <button type="submit" id="submitBtn" class="btn-submit">💾 บันทึกข้อมูลศิษย์เก่า</button>
-            <button type="button" id="cancelBtn" class="btn-cancel">❌ ยกเลิกการแก้ไข</button>
+            <button type="submit" id="submitBtn" class="btn-submit">บันทึกข้อมูลศิษย์เก่า</button>
+            <button type="button" id="cancelBtn" class="btn-cancel">ยกเลิกการแก้ไข</button>
           </div>
         </form>
       </div>
