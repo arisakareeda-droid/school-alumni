@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ระบบจัดการข้อมูลศิษย์เก่า - โรงเรียนบ้านน้ำเค็ม</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <header class="school-header">
+    <div class="header-container">
+      <div class="logo-area">
+        <img src="logo" alt="โลโก้โรงเรียนบ้านน้ำเค็ม" class="school-logo" onerror="this.src='https://placehold.co/100x100/15803d/ffffff?text=Logo'">
+      </div>
+      <div class="title-area">
+        <h2>ระบบจัดการข้อมูลศิษย์เก่าออนไลน์ (Admin)</h2>
+        <h1>โรงเรียนบ้านน้ำเค็ม</h1>
+        <p>ตำบลบ้านนา อำเภอจะนะ จังหวัดสงขลา</p>
+        <small>สำนักงานเขตพื้นที่การศึกษาประถมศึกษาสงขลา เขต 3</small>
+      </div>
+    </div>
+    <div class="nav-bar">
+      <div class="header-container">
+        <a href="index.html" class="back-link">← กลับหน้าหลักค้นหาข้อมูล</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-container">
+    
+    <section class="card-section">
+      <div class="card-header">
+        <h3 id="formTitle">➕ เพิ่มข้อมูลนักเรียนใหม่</h3>
+      </div>
+      <div class="card-body">
+        <form id="studentForm">
+          <input type="hidden" id="currentDocId"> 
+          
+          <div class="form-group">
+            <label>รหัสนักเรียน:</label>
+            <input type="text" id="studentId" required placeholder="กรอกรหัสนักเรียน">
+          </div>
+          
+          <div class="form-group">
+            <label>คำนำหน้า:</label>
+            <select id="prefix">
+              <option value="เด็กชาย">เด็กชาย</option>
+              <option value="เด็กหญิง">เด็กหญิง</option>
+              <option value="">ไม่ระบุ/อื่นๆ</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>ชื่อ:</label>
+            <input type="text" id="firstname" required placeholder="กรอกชื่อจริง">
+          </div>
+
+          <div class="form-group">
+            <label>นามสกุล:</label>
+            <input type="text" id="lastname" required placeholder="กรอกนามสกุล">
+          </div>
+
+          <div class="form-group">
+            <label>ปีที่จบการศึกษา (พ.ศ.):</label>
+            <input type="number" id="graduateYear" required placeholder="เช่น 2568">
+          </div>
+
+          <div class="form-group">
+            <label>ห้อง (เช่น ป.6/1):</label>
+            <input type="text" id="classroom" placeholder="เช่น ป.6/1">
+          </div>
+
+          <div class="form-group">
+            <label>แนบรูปใบจบการศึกษา:</label>
+            <div class="file-upload-wrapper">
+              <input type="file" id="diplomaFile" accept="image/*">
+            </div>
+            <small class="form-help">*หากต้องการแก้ไขข้อมูลโดยไม่เปลี่ยนรูป ไม่ต้องเลือกไฟล์ใหม่</small>
+          </div>
+
+          <div class="button-group">
+            <button type="submit" id="submitBtn" class="btn-submit">💾 บันทึกข้อมูลศิษย์เก่า</button>
+            <button type="button" id="cancelBtn" class="btn-cancel">❌ ยกเลิกการแก้ไข</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <section class="card-section">
+      <div class="card-header list-header">
+        <h3>📋 รายชื่อนักเรียนทั้งหมดในระบบ</h3>
+      </div>
+      <div class="card-body table-responsive">
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>รหัส</th>
+              <th>ชื่อ-นามสกุล</th>
+              <th>ชั้น/ห้อง</th>
+              <th>ปีที่จบ</th>
+              <th>จัดการ</th>
+            </tr>
+          </thead>
+          <tbody id="adminStudentTableBody">
+            <tr>
+              <td colspan="5" style="text-align: center; color: #64748b; padding: 2rem;">กำลังโหลดข้อมูลหลังบ้าน...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <script type="module" src="admin.js"></script>
+</body>
+</html>
