@@ -41,7 +41,7 @@ async function fetchStudents() {
 // ฟังก์ชันนำข้อมูลไปเขียนแสดงผลในตารางบนหน้าเว็บ
 function renderTable(data) {
   if (data.length === 0) {
-    studentTableBody.innerHTML = `<tr><td colspan="5" style="text-align:center;">❌ ไม่พบข้อมูลศิษย์เก่าที่ค้นหา</td></tr>`;
+    studentTableBody.innerHTML = `<tr><td colspan="5" style="text-align:center;">ไม่พบข้อมูลศิษย์เก่าที่ค้นหา</td></tr>`;
     return;
   }
 
@@ -54,7 +54,7 @@ function renderTable(data) {
         <td>${student.graduateYear}</td>
         <td>${student.classroom || '-'}</td>
         <td>
-          ${student.imageUrl ? `<a href="${student.imageUrl}" target="_blank" class="btn-view">👁️ ดูใบจบ</a>` : 'ไม่มีรูป'}
+          ${student.imageUrl ? `<a href="${student.imageUrl}" target="_blank" class="btn-view">ดูใบจบ</a>` : 'ไม่มีรูป'}
         </td>
       </tr>
     `;
