@@ -8,8 +8,23 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
+
+  <script>
+    // เช็กว่าถ้ายังไม่ได้ล็อกอิน ให้แจ้งเตือนด้วย SweetAlert2 แล้วเด้งกลับหน้า Login
+    if (sessionStorage.getItem('isAdminLoggedIn') !== 'true') {
+      Swal.fire({
+        icon: 'warning',
+        title: 'ยังไม่ได้เข้าสู่ระบบ',
+        text: 'กรุณาเข้าสู่ระบบก่อนใช้งาน',
+        confirmButtonColor: '#166534'
+      }).then(() => {
+        window.location.href = 'login.html';
+      });
+    }
+  </script>
 
   <header class="school-header">
     <div class="header-container">
@@ -24,7 +39,7 @@
     <div class="nav-bar" style="padding: 10px 0;">
       <div class="header-container" style="display: flex; justify-content: space-between; align-items: center;">
         <span style="color: #fef08a; font-size: 16px; font-weight: 600;">ส่วนงานจัดการและบันทึกข้อมูลหลังบ้าน</span>
-        <a href="index.html" class="back-link" style="color: white; text-decoration: none; font-size: 16px; font-weight: 600; background: rgba(255,255,255,0.25); padding: 6px 18px; border-radius: 20px; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">🔍 กลับหน้าหลักค้นหาข้อมูล</a>
+        <a href="index.html" class="back-link" style="color: white; text-decoration: none; font-size: 16px; font-weight: 600; background: rgba(255,255,255,0.25); padding: 6px 18px; border-radius: 20px; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">กลับหน้าหลัก</a>
       </div>
     </div>
   </header>
@@ -32,8 +47,8 @@
   <main class="main-container">
     
     <section class="card-section">
-      <div class="card-header">
-        <h3 id="formTitle">➕ เพิ่มข้อมูลนักเรียนใหม่</h3>
+      <div class="card-header" style="background-color: #fef9c3; border-bottom: 2px solid #fef08a; padding: 15px;">
+        <h3 id="formTitle" style="color: #854d0e; margin: 0;">เพิ่มข้อมูลนักเรียนใหม่</h3>
       </div>
       <div class="card-body">
         <form id="studentForm">
@@ -41,12 +56,12 @@
           
           <div class="form-group">
             <label>รหัสนักเรียน</label>
-            <input type="text" id="studentId" required placeholder="กรอกรหัสนักเรียน">
+            <input type="text" id="studentId" class="login-input" required placeholder="กรอกรหัสนักเรียน">
           </div>
           
           <div class="form-group">
             <label>คำนำหน้า</label>
-            <select id="prefix">
+            <select id="prefix" class="login-input">
               <option value="เด็กชาย">เด็กชาย</option>
               <option value="เด็กหญิง">เด็กหญิง</option>
               <option value="">ไม่ระบุ/อื่นๆ</option>
@@ -55,22 +70,22 @@
 
           <div class="form-group">
             <label>ชื่อ</label>
-            <input type="text" id="firstname" required placeholder="กรอกชื่อจริง">
+            <input type="text" id="firstname" class="login-input" required placeholder="กรอกชื่อจริง">
           </div>
 
           <div class="form-group">
             <label>นามสกุล</label>
-            <input type="text" id="lastname" required placeholder="กรอกนามสกุล">
+            <input type="text" id="lastname" class="login-input" required placeholder="กรอกนามสกุล">
           </div>
 
           <div class="form-group">
             <label>ปีที่จบการศึกษา (พ.ศ.)</label>
-            <input type="number" id="graduateYear" required placeholder="เช่น 2568">
+            <input type="number" id="graduateYear" class="login-input" required placeholder="เช่น 2568">
           </div>
 
           <div class="form-group">
             <label>ห้อง (เช่น ป.6/1)</label>
-            <input type="text" id="classroom" placeholder="เช่น ป.6/1">
+            <input type="text" id="classroom" class="login-input" placeholder="เช่น ป.6/1">
           </div>
 
           <div class="form-group">
@@ -81,9 +96,9 @@
             <small class="form-help">*หากต้องการแก้ไขข้อมูลโดยไม่เปลี่ยนรูป ไม่ต้องเลือกไฟล์ใหม่</small>
           </div>
 
-          <div class="button-group">
-            <button type="submit" id="submitBtn" class="btn-submit">บันทึกข้อมูลศิษย์เก่า</button>
-            <button type="button" id="cancelBtn" class="btn-cancel">ยกเลิกการแก้ไข</button>
+          <div class="button-group" style="display: flex; flex-direction: column; gap: 10px;">
+            <button type="submit" id="submitBtn" class="btn-common btn-submit">บันทึกข้อมูลศิษย์เก่า</button>
+            <button type="button" id="cancelBtn" class="btn-common btn-cancel" style="display: none;">ยกเลิกการแก้ไข</button>
           </div>
         </form>
       </div>
@@ -91,7 +106,7 @@
 
     <section class="card-section">
       <div class="card-header list-header">
-        <h3>📋 รายชื่อนักเรียนทั้งหมดในระบบ</h3>
+        <h3>รายชื่อนักเรียนทั้งหมดในระบบ</h3>
       </div>
       <div class="card-body table-responsive">
         <table class="custom-table">
