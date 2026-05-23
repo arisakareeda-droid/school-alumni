@@ -8,6 +8,55 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ปรับแต่งสไตล์ช่องกรอกคำค้นหาให้นุ่มนวล มีมิติ */
+    .search-custom-input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px; /* ขอบโค้งมนล้อไปกับกล่อง Card */
+      font-family: 'Sarabun', sans-serif;
+      font-size: 15px;
+      box-sizing: border-box;
+      transition: all 0.2s ease;
+      background-color: #f8fafc;
+    }
+    /* เวลาเอาเมาส์ไปคลิกพิมพ์ ให้กรอบเรืองแสงสีเขียวธรรมชาติ */
+    .search-custom-input:focus {
+      outline: none;
+      background-color: #ffffff;
+      border-color: #166534;
+      box-shadow: 0 0 0 3px rgba(22, 101, 52, 0.12);
+    }
+
+    /* ปรับแต่งปุ่มกดค้นหาให้สวยเด่น โค้งมนเข้าชุดกัน */
+    .search-custom-btn {
+      width: auto;
+      padding: 0 28px;
+      white-space: nowrap;
+      background-color: #166534; /* สีเขียวหลักของโรงเรียน */
+      color: white;
+      border: none;
+      border-radius: 8px; /* โค้งมนเท่ากับช่องกรอกข้อมูล */
+      font-family: 'Sarabun', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+      transition: all 0.2s ease;
+    }
+    /* เอฟเฟกต์เวลาเมาส์ชี้ปุ่มค้นหา */
+    .search-custom-btn:hover {
+      background-color: #14532d; /* เขียวเข้มขึ้นเล็กน้อย */
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      transform: translateY(-1px);
+    }
+    /* เอฟเฟกต์เวลากดปุ่ม */
+    .search-custom-btn:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    }
+  </style>
 </head>
 <body>
 
@@ -24,7 +73,7 @@
     <div class="nav-bar" style="padding: 10px 0;">
       <div class="header-container" style="display: flex; justify-content: space-between; align-items: center;">
         <span style="color: #fef08a; font-size: 16px; font-weight: 600;">ยินดีต้อนรับสู่ระบบฐานข้อมูลศิษย์เก่า</span>
-        <a href="admin.html" class="admin-link" style="color: white; text-decoration: none; font-size: 16px; font-weight: 600; background: rgba(255,255,255,0.25); padding: 6px 18px; border-radius: 20px; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">🔐 เข้าสู่ระบบแอดมิน</a>
+        <a href="login.html" class="admin-link" style="color: white; text-decoration: none; font-size: 16px; font-weight: 600; background: rgba(255,255,255,0.25); padding: 6px 18px; border-radius: 20px; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">เข้าสู่ระบบแอดมิน</a>
       </div>
     </div>
   </header>
@@ -33,20 +82,20 @@
     
     <section class="card-section" style="margin-bottom: 25px;">
       <div class="card-header">
-        <h3>🔍 ค้นหารายชื่อศิษย์เก่า</h3>
+        <h3>ค้นหารายชื่อศิษย์เก่า</h3>
       </div>
       <div class="card-body">
-        <div style="display: flex; gap: 10px;">
-          <input type="text" id="searchInput" placeholder="พิมพ์ชื่อ, นามสกุล หรือปีที่จบ พ.ศ. เพื่อค้นหาข้อมูล...">
-          <button id="searchBtn" class="btn-submit" style="width: auto; padding: 0 25px; white-space: nowrap;">🔍 ค้นหาข้อมูล</button>
+        <div style="display: flex; gap: 12px;">
+          <input type="text" id="searchInput" class="search-custom-input" placeholder="พิมพ์ชื่อ, นามสกุล หรือปีที่จบ พ.ศ. เพื่อค้นหาข้อมูล...">
+          <button id="searchBtn" class="search-custom-btn">ค้นหาข้อมูล</button>
         </div>
-        <small class="form-help" style="margin-top: 8px; display: block;">* สามารถค้นหาพร้อมกันได้ เช่น พิมพ์ชื่อ หรือปี พ.ศ. ที่จบการศึกษา</small>
+        <small class="form-help" style="margin-top: 10px; display: block;">* สามารถค้นหาพร้อมกันได้ เช่น พิมพ์ชื่อ หรือปี พ.ศ. ที่จบการศึกษา</small>
       </div>
     </section>
 
     <section class="card-section">
       <div class="card-header list-header">
-        <h3>📊 ผลการค้นหาข้อมูลนักเรียน</h3>
+        <h3>ผลการค้นหาข้อมูลนักเรียน</h3>
       </div>
       <div class="card-body table-responsive">
         <table class="custom-table">
