@@ -1,32 +1,57 @@
-async function uploadImage(file) {
-  if (!file) return "";
-  const apiKey = '6d207e02198a847aa98d0a2a901485a5';
-  const formData = new FormData();
-  formData.append('source', file);
+// ฟังก์ชันบันทึกข้อมูล (แทนที่ตัวเดิมได้เลย)
+studentForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  submitBtn.innerText = "กำลังประมวลผลรูป...";
+  submitBtn.disabled = true;
+
+  const fileInput = document.getElementById('diplomaFile');
+  const file = fileInput.files[0];
+  
+  // ฟังก์ชันอ่านไฟล์เป็น Base64
+  const getBase64 = (file) => new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = error => reject(error);
+  });
+
+  let base64Image = "";
+  if (file) {
+    try {
+      base64Image = await getBase64(file);
+    } catch (err) {
+      Swal.fire('ผิดพลาด', 'ไม่สามารถอ่านไฟล์รูปได้', 'error');
+      submitBtn.innerText = "บันทึกข้อมูลศิษย์เก่า";
+      submitBtn.disabled = false;
+      return;
+    }
+  }
+
+  const studentData = {
+    studentId: document.getElementById('studentId').value,
+    prefix: document.getElementById('prefix').value,
+    firstname: document.getElementById('firstname').value,
+    lastname: document.getElementById('lastname').value,
+    graduateYear: document.getElementById('graduateYear').value,
+    classroom: document.getElementById('classroom').value,
+    imageUrl: base64Image // เก็บรูปในรูปแบบรหัสข้อความ
+  };
 
   try {
-    const response = await fetch(`https://freeimage.host/api/1/upload?key=${apiKey}`, {
-      method: 'POST',
-      body: formData
-    });
-
-    const result = await response.json();
-    console.log("ผลลัพธ์จากเซิร์ฟเวอร์:", result); // <-- สำคัญมาก: เปิด Console (F12) ดูตัวนี้
-
-    if (result.status_code === 200) {
-      return result.image.url;
+    const docId = document.getElementById('currentDocId').value;
+    if (isEditing) {
+      await updateDoc(doc(db, "students", docId), studentData);
+      Swal.fire('สำเร็จ', 'แก้ไขข้อมูลเรียบร้อยแล้ว', 'success');
     } else {
-      // แจ้งเตือนข้อความที่เซิร์ฟเวอร์ส่งกลับมาจริงๆ
-      throw new Error(result.error?.message || "ไม่สามารถอัปโหลดได้");
+      await addDoc(collection(db, "students"), studentData);
+      Swal.fire('สำเร็จ', 'เพิ่มข้อมูลศิษย์เก่าเรียบร้อยแล้ว', 'success');
     }
-  } catch (err) {
-    console.error("Error:", err);
-    Swal.fire({
-      icon: 'error',
-      title: 'อัปโหลดไม่ผ่าน',
-      text: err.message,
-      confirmButtonColor: '#166534'
-    });
-    return "";
+    studentForm.reset();
+    loadAdminData();
+  } catch (error) {
+    Swal.fire('ผิดพลาด', 'บันทึกข้อมูลล้มเหลว', 'error');
+  } finally {
+    submitBtn.innerText = "บันทึกข้อมูลศิษย์เก่า";
+    submitBtn.disabled = false;
   }
-}
+});
