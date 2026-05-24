@@ -1,3 +1,22 @@
+<script>
+  // ถ้ายังไม่ได้ล็อกอิน ให้เด้งไปหน้าถามรหัสผ่าน
+  if (sessionStorage.getItem('isAlumniLoggedIn') !== 'true') {
+    Swal.fire({
+      title: 'กรุณาใส่รหัสผ่านเพื่อเข้าใช้งาน',
+      input: 'password',
+      inputPlaceholder: 'รหัสผ่านสำหรับศิษย์เก่า',
+      confirmButtonText: 'เข้าสู่ระบบ',
+      allowOutsideClick: false,
+      inputValidator: (value) => {
+        if (value !== 'alumni2569') { // ตั้งรหัสผ่านที่นี่
+          return 'รหัสผ่านไม่ถูกต้อง!';
+        }
+      }
+    }).then(() => {
+      sessionStorage.setItem('isAlumniLoggedIn', 'true');
+    });
+  }
+</script>
 <!DOCTYPE html>
 <html lang="th">
 <head>
