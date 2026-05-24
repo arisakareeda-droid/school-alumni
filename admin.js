@@ -1,133 +1,137 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { db } from './firebase-config.js';
 
-// ใส่ค่า Firebase Config ของคุณ
-const firebaseConfig = {
-  apiKey: "AIzaSyDA6VlDShC5-3XMCSdpbVMnkKkLEhGf_xY",
-  authDomain: "school-alumni-system-a7ccf.firebaseapp.com",
-  projectId: "school-alumni-system-a7ccf",
-  storageBucket: "school-alumni-system-a7ccf.firebasestorage.app",
-  messagingSenderId: "431697154857",
-  appId: "1:431697154857:web:6ee940ad8f899560525d38",
-  measurementId: "G-RT50BXY1TP"
-};
+import {
+  collection,
+  addDoc,
+  getDocs,
+  deleteDoc,
+  updateDoc,
+  doc
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+const form = document.getElementById("studentForm");
+const tableBody = document.getElementById("studentTableBody");
 
-// ประกาศตัวแปร
 let allStudents = [];
-const studentForm = document.getElementById("studentForm");
-const adminStudentTableBody = document.getElementById("adminStudentTableBody");
-const formTitle = document.getElementById("formTitle");
-const cancelBtn = document.getElementById("cancelBtn");
-const currentDocIdInput = document.getElementById("currentDocId");
 
-// ฟังก์ชันอัปโหลดรูป (ผ่าน API ImgBB)
-async function uploadImage(file) {
-  if (!file) return "";
-  const apiKey = '9104e68e3a436ecc3ab10a3cb31c350a'; 
-  const formData = new FormData();
-  formData.append('image', file);
-  const response = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, { method: 'POST', body: formData });
-  const result = await response.json();
-  if (result.success) return result.data.url;
-  throw new Error("อัปโหลดรูปภาพไม่สำเร็จ");
-}
+async function loadStudents(){
 
-// ฟังก์ชันดึงข้อมูลมาแสดงผล
-async function fetchStudentsAdmin() {
-  try {
-    const querySnapshot = await getDocs(collection(db, "students"));
-    allStudents = [];
-    let html = '';
-    
-    querySnapshot.forEach((docSnap) => {
-      const data = docSnap.data();
-      allStudents.push({ id: docSnap.id, ...data });
-      html += `
-        <tr>
-          <td>${data.studentId || '-'}</td>
-          <td>${data.prefix || ''}${data.firstname || ''} ${data.lastname || ''}</td>
-          <td>${data.classroom || '-'}</td>
-          <td>${data.graduateYear || '-'}</td>
-          <td style="text-align:center;">
-            <button class="btn-edit-action" data-id="${docSnap.id}" style="padding: 5px 10px; cursor: pointer;">แก้ไข</button>
-            <button class="btn-delete-action" data-id="${docSnap.id}" style="padding: 5px 10px; cursor: pointer; color: red;">ลบ</button>
-          </td>
-        </tr>`;
+  const querySnapshot = await getDocs(collection(db, "students"));
+
+  allStudents = [];
+
+  querySnapshot.forEach((docSnap)=>{
+
+    allStudents.push({
+      id: docSnap.id,
+      ...docSnap.data()
     });
 
-    adminStudentTableBody.innerHTML = html || '<tr><td colspan="5" style="text-align:center;">ไม่มีข้อมูล</td></tr>';
-    addTableEventHandlers();
-  } catch (error) {
-    console.error(error);
-  }
+  });
+
+  renderTable();
 }
 
-// จัดการเหตุการณ์ในตาราง (ปุ่มแก้ไข/ลบ)
-function addTableEventHandlers() {
-  document.querySelectorAll(".btn-edit-action").forEach(btn => btn.addEventListener("click", (e) => {
-    const s = allStudents.find(x => x.id === e.target.dataset.id);
-    document.getElementById("idCard").value = s.idCard || "";
-    document.getElementById("studentId").value = s.studentId || "";
-    document.getElementById("firstname").value = s.firstname || "";
-    document.getElementById("lastname").value = s.lastname || "";
-    document.getElementById("graduateYear").value = s.graduateYear || "";
-    document.getElementById("classroom").value = s.classroom || "";
-    document.getElementById("prefix").value = s.prefix || "";
-    currentDocIdInput.value = s.id;
-    formTitle.innerText = "แก้ไขข้อมูลศิษย์เก่า";
-    cancelBtn.style.display = "block";
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }));
+function renderTable(){
 
-  document.querySelectorAll(".btn-delete-action").forEach(btn => btn.addEventListener("click", async (e) => {
-    if (confirm("ยืนยันการลบข้อมูลนี้?")) {
-      await deleteDoc(doc(db, "students", e.target.dataset.id));
-      fetchStudentsAdmin();
-    }
-  }));
+  let html = "";
+
+  allStudents.forEach(student => {
+
+    html += `
+    <tr>
+
+      <td>${student.studentId}</td>
+
+      <td>
+        ${student.prefix}
+        ${student.firstname}
+        ${student.lastname}
+      </td>
+
+      <td>${student.classroom}</td>
+
+      <td>${student.graduateYear}</td>
+
+      <td>
+
+        <button onclick="editStudent('${student.id}')">
+          แก้ไข
+        </button>
+
+        <button onclick="deleteStudentData('${student.id}')">
+          ลบ
+        </button>
+
+      </td>
+
+    </tr>
+    `;
+
+  });
+
+  tableBody.innerHTML = html;
 }
 
-// จัดการการบันทึกข้อมูล
-studentForm.addEventListener("submit", async (e) => {
+form.addEventListener("submit", async (e)=>{
+
   e.preventDefault();
-  Swal.fire({ title: 'กำลังบันทึก...', didOpen: () => Swal.showLoading() });
-  try {
-    const file = document.getElementById("diplomaFile").files[0];
-    let imageUrl = file ? await uploadImage(file) : null;
-    
-    const data = {
-      idCard: document.getElementById("idCard").value,
-      studentId: document.getElementById("studentId").value,
-      prefix: document.getElementById("prefix").value,
-      firstname: document.getElementById("firstname").value,
-      lastname: document.getElementById("lastname").value,
-      graduateYear: document.getElementById("graduateYear").value,
-      classroom: document.getElementById("classroom").value
-    };
-    if (imageUrl) data.imageUrl = imageUrl;
 
-    if (currentDocIdInput.value) {
-      await updateDoc(doc(db, "students", currentDocIdInput.value), data);
-    } else {
-      await addDoc(collection(db, "students"), { ...data, createdAt: new Date() });
-    }
-    Swal.close();
-    resetFormToInsertMode();
-    fetchStudentsAdmin();
-  } catch (err) {
-    Swal.fire('ผิดพลาด', err.message, 'error');
+  const studentData = {
+
+    idCard: document.getElementById("idCard").value,
+
+    studentId: document.getElementById("studentId").value,
+
+    prefix: document.getElementById("prefix").value,
+
+    firstname: document.getElementById("firstname").value,
+
+    lastname: document.getElementById("lastname").value,
+
+    classroom: document.getElementById("classroom").value,
+
+    graduateYear: document.getElementById("graduateYear").value
+
+  };
+
+  const docId = document.getElementById("docId").value;
+
+  if(docId){
+
+    await updateDoc(doc(db, "students", docId), studentData);
+
+  } else {
+
+    await addDoc(collection(db, "students"), studentData);
+
   }
+
+  form.reset();
+
+  loadStudents();
+
 });
 
-function resetFormToInsertMode() {
-  studentForm.reset();
-  currentDocIdInput.value = "";
-  formTitle.innerText = "เพิ่มข้อมูลนักเรียนใหม่";
-  cancelBtn.style.display = "none";
+window.editStudent = function(id){
+
+  const student = allStudents.find(s => s.id === id);
+
+  document.getElementById("docId").value = student.id;
+  document.getElementById("idCard").value = student.idCard;
+  document.getElementById("studentId").value = student.studentId;
+  document.getElementById("prefix").value = student.prefix;
+  document.getElementById("firstname").value = student.firstname;
+  document.getElementById("lastname").value = student.lastname;
+  document.getElementById("classroom").value = student.classroom;
+  document.getElementById("graduateYear").value = student.graduateYear;
 }
 
-cancelBtn.addEventListener("click", resetFormToInsertMode);
-document.addEventListener("DOMContentLoaded", fetchStudentsAdmin);
+window.deleteStudentData = async function(id){
+
+  await deleteDoc(doc(db, "students", id));
+
+  loadStudents();
+}
+
+loadStudents();
