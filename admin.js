@@ -117,6 +117,7 @@ studentForm.addEventListener("submit", async (e) => {
     let imageUrl = file ? await uploadImage(file) : "";
     
     const data = {
+      idCard: document.getElementById("idCard").value,
       studentId: document.getElementById("studentId").value,
       firstname: document.getElementById("firstname").value,
       lastname: document.getElementById("lastname").value,
