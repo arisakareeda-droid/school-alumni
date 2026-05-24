@@ -42,8 +42,17 @@ async function fetchStudents() {
 
 function renderTable(data) {
   if (!studentTableBody) return;
+  
+  // Empty State: แจ้งเตือนเมื่อไม่พบรายชื่อ
   if (data.length === 0) {
-    studentTableBody.innerHTML = `<tr><td colspan="5" style="text-align:center;">ไม่พบข้อมูลศิษย์เก่าในระบบ</td></tr>`;
+    studentTableBody.innerHTML = `
+      <tr>
+        <td colspan="5" style="text-align:center; padding: 3rem; color: #64748b;">
+          <div style="font-size: 2rem; margin-bottom: 10px;">🔍</div>
+          <strong>ขออภัย ไม่พบรายชื่อที่ค้นหา</strong><br>
+          กรุณาตรวจสอบชื่อ หรือปีที่จบการศึกษาใหม่อีกครั้งครับ
+        </td>
+      </tr>`;
     return;
   }
 
