@@ -3,114 +3,39 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ระบบค้นหาข้อมูลศิษย์เก่า - โรงเรียนบ้านน้ำเค็ม</title>
+
+  <title>ค้นหาศิษย์เก่า</title>
+
   <link rel="stylesheet" href="style.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  
-  <style>
-    .search-custom-input { width: 100%; padding: 12px 16px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 15px; box-sizing: border-box; background-color: #f8fafc; }
-    .search-custom-input:focus { outline: none; border-color: #166534; box-shadow: 0 0 0 3px rgba(22, 101, 52, 0.12); }
-    .search-custom-btn { width: auto; padding: 0 28px; background-color: #166534; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
-    .search-custom-btn:hover { background-color: #14532d; }
-  </style>
 </head>
 <body>
 
-  <script>
-    if (sessionStorage.getItem('isAlumniLoggedIn') !== 'true') {
-      Swal.fire({
-        title: 'กรุณาใส่รหัสผ่านเพื่อเข้าใช้งาน',
-        input: 'password',
-        inputPlaceholder: 'รหัสผ่านสำหรับศิษย์เก่า',
-        confirmButtonText: 'เข้าสู่ระบบ',
-        allowOutsideClick: false,
-        inputValidator: (value) => {
-          if (value !== 'alumni2569') { return 'รหัสผ่านไม่ถูกต้อง!'; }
-        }
-      }).then(() => {
-        sessionStorage.setItem('isAlumniLoggedIn', 'true');
-      });
-    }
-  </script>
+<div class="search-container">
 
-  <header class="school-header">
-    <div class="header-container">
-      <img src="logo.png" alt="โลโก้" class="school-logo" onerror="this.src='https://placehold.co/100x100/15803d/ffffff?text=Logo'">
-      <div class="title-area">
-        <h2>ระบบบริการค้นหาข้อมูลศิษย์เก่าออนไลน์</h2>
-        <h1>โรงเรียนบ้านน้ำเค็ม</h1>
-      </div>
-    </div>
-  </header>
+  <h1>ค้นหาศิษย์เก่า</h1>
 
-  <main class="main-container" style="max-width: 1000px; margin: 2rem auto; width: 92%;">
-    <section class="card-section" style="margin-bottom: 25px;">
-      <div class="card-header"><h3>ค้นหาข้อมูลศิษย์เก่าด้วยเลขบัตรประชาชน</h3></div>
-      <div class="card-body">
-        <div style="display: flex; gap: 12px;">
-          <input type="text" id="searchInput" class="search-custom-input" placeholder="กรอกเลขบัตรประชาชน 13 หลัก">
-          <button id="searchBtn" class="search-custom-btn">ค้นหา</button>
-        </div>
-      </div>
-    </section>
+  <input type="text" id="searchInput" placeholder="เลขบัตรประชาชน">
 
-    <section class="card-section">
-      <div class="card-header"><h3>ผลการค้นหา</h3></div>
-      <div class="card-body table-responsive">
-        <table class="custom-table">
-          <thead>
-            <tr>
-              <th>รหัสนักเรียน</th>
-              <th>ชื่อ-นามสกุล</th>
-              <th>ชั้น/ห้อง</th>
-              <th>ปีที่จบ</th>
-              <th>ใบจบการศึกษา</th>
-            </tr>
-          </thead>
-          <tbody id="studentTableBody">
-            <tr><td colspan="5" style="text-align: center; padding: 2.5rem;">กรอกเลขบัตรประชาชนเพื่อค้นหาข้อมูลของท่าน</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-  </main>
+  <button id="searchBtn">
+    ค้นหา
+  </button>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  <table>
 
-    const firebaseConfig = { /* ใส่ค่า config เดิมของคุณตรงนี้ */ };
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+    <thead>
+      <tr>
+        <th>ชื่อ</th>
+        <th>ห้อง</th>
+        <th>ปีจบ</th>
+      </tr>
+    </thead>
 
-    let allStudents = [];
-    async function init() {
-      const querySnapshot = await getDocs(collection(db, "students"));
-      querySnapshot.forEach(doc => allStudents.push(doc.data()));
-    }
-    init();
+    <tbody id="studentTableBody"></tbody>
 
-    document.getElementById('searchBtn').addEventListener('click', () => {
-      const idCard = document.getElementById('searchInput').value.trim();
-      const student = allStudents.find(s => s.idCard === idCard);
-      const tbody = document.getElementById('studentTableBody');
+  </table>
 
-      if (student) {
-        tbody.innerHTML = `<tr>
-          <td>${student.studentId}</td>
-          <td>${student.firstname} ${student.lastname}</td>
-          <td>${student.classroom}</td>
-          <td>${student.graduateYear}</td>
-          <td><a href="${student.imageUrl}" target="_blank">ดูใบจบ</a></td>
-        </tr>`;
-      } else {
-        Swal.fire('ไม่พบข้อมูล', 'โปรดตรวจสอบเลขบัตรประชาชนอีกครั้ง', 'error');
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">ไม่พบข้อมูล</td></tr>';
-      }
-    });
-  </script>
+</div>
+
+<script type="module" src="search.js"></script>
 </body>
 </html>
