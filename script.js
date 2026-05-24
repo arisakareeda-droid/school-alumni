@@ -1,7 +1,8 @@
-// นำเข้าโมดูล Firebase สำหรับเชื่อมต่อฐานข้อมูล
+// 1. นำเข้าโมดูล Firebase สำหรับเชื่อมต่อฐานข้อมูล
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
+// ตั้งค่า Firebase (ใช้คอนฟิกเดิมของคุณ)
 const firebaseConfig = {
   apiKey: "AIzaSyDA6VlDShC5-3XMCSdpbVMnkKkLEhGf_xY",
   authDomain: "school-alumni-system-a7ccf.firebaseapp.com",
@@ -11,75 +12,109 @@ const firebaseConfig = {
   appId: "1:431697154857:web:6ee940ad8f899560525d38",
   measurementId: "G-RT50BXY1TP"
 };
+
 // เริ่มต้นใช้งาน Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-const studentTableBody = document.getElementById('studentTableBody');
-const searchInput = document.getElementById('searchInput');
-const searchBtn = document.getElementById('searchBtn');
+// 2. ฟังก์ชันอัปโหลดรูปภาพผ่าน ImgBB
+async function uploadImage(file) {
+  if (!file) return "";
+  
+  const apiKey = '9104e68e3a436ecc3ab10a3cb31c350a'; 
+  const formData = new FormData();
+  formData.append('image', file);
 
-let allStudents = []; // กล่องสำหรับเก็บข้อมูลนักเรียนทั้งหมดที่ดึงมาจากฐานข้อมูล
-
-// ฟังก์ชันดึงข้อมูลจาก Firebase Firestore
-async function fetchStudents() {
   try {
-    const querySnapshot = await getDocs(collection(db, "students"));
-    allStudents = [];
-    
-    querySnapshot.forEach((doc) => {
-      allStudents.push({ id: doc.id, ...doc.data() });
+    const response = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
+      method: 'POST',
+      body: formData
     });
+
+    const result = await response.json();
+    console.log("ผลลัพธ์การอัปโหลดจาก ImgBB:", result); 
     
-    renderTable(allStudents);
-  } catch (error) {
-    console.error("เกิดข้อผิดพลาดในการดึงข้อมูล:", error);
-    studentTableBody.innerHTML = `<tr><td colspan="5" style="color:red; text-align:center;">ไม่สามารถโหลดข้อมูลได้ กรุณาตรวจสอบการตั้งค่าฐานข้อมูล</td></tr>`;
+    if (result.success) {
+      console.log("อัปโหลดสำเร็จ! ลิงก์รูปคือ:", result.data.url);
+      return result.data.url; 
+    } else {
+      console.error("ImgBB ปฏิเสธการอัปโหลด:", result.error.message);
+      throw new Error(result.error.message || "อัปโหลดรูปภาพไม่สำเร็จ");
+    }
+  } catch (err) {
+    console.error("เกิดข้อผิดพลาดในการเชื่อมต่อ ImgBB:", err);
+    throw err; 
   }
 }
 
-// ฟังก์ชันนำข้อมูลไปเขียนแสดงผลในตารางบนหน้าเว็บ
-function renderTable(data) {
-  if (data.length === 0) {
-    studentTableBody.innerHTML = `<tr><td colspan="5" style="text-align:center;">ไม่พบข้อมูลศิษย์เก่าที่ค้นหา</td></tr>`;
-    return;
+// 3. ดักจับเหตุการณ์ตอนกดปุ่ม "บันทึกข้อมูลศิษย์เก่า"
+document.addEventListener("DOMContentLoaded", () => {
+  // หาฟอร์มในหน้าเว็บแอดมิน
+  const alumniForm = document.querySelector("form") || document.getElementById("alumniForm");
+
+  if (alumniForm) {
+    alumniForm.addEventListener("submit", async (e) => {
+      e.preventDefault(); // หยุดการรีเฟรชหน้าจอ
+      console.log("กำลังเริ่มกระบวนการบันทึกข้อมูล...");
+
+      // ดึงค่าจากช่องอินพุตต่างๆ (อิงตาม ID ของคุณในหน้าจอ)
+      const studentId = document.getElementById("studentId")?.value || "";
+      const prefix = document.getElementById("title")?.value || ""; // คำนำหน้า เช่น เด็กชาย
+      const firstname = document.getElementById("firstname")?.value || document.querySelector("input[placeholder='กรอกชื่อ']")?.value || "";
+      const lastname = document.getElementById("lastname")?.value || document.querySelector("input[placeholder='กรอกนามสกุล']")?.value || "";
+      const graduateYear = document.getElementById("graduateYear")?.value || document.querySelector("input[placeholder='2566']")?.value || "";
+      const classroom = document.getElementById("classroom")?.value || document.querySelector("input[placeholder='ป.6/1']")?.value || "";
+      
+      // หาช่องเลือกรูปภาพ
+      const imageInput = document.querySelector("input[type='file']");    
+      const file = imageInput?.files[0];
+
+      if (!file) {
+        alert("กรุณาเลือกรูปภาพใบจบการศึกษาก่อนบันทึกครับ");
+        return;
+      }
+
+      try {
+        // แสดงสถานะใน Console ว่ากำลังอัปโหลดรูป
+        console.log("กำลังส่งรูปภาพไปเก็บที่ ImgBB...");
+        
+        // 1. อัปโหลดรูปไป ImgBB ก่อนเพื่อเอาลิงก์ URL
+        const imageUrl = await uploadImage(file);
+
+        if (!imageUrl) {
+          alert("ไม่สามารถดึงลิงก์รูปภาพจาก ImgBB ได้");
+          return;
+        }
+
+        // 2. จัดเตรียมโครงสร้างข้อมูลให้ตรงกับฐานข้อมูลเดิมของคุณ
+        const studentData = {
+          studentId: studentId,
+          prefix: prefix,
+          firstname: firstname,
+          lastname: lastname,
+          graduateYear: graduateYear,
+          classroom: classroom,
+          imageUrl: imageUrl, // ใส่ลิงก์รูปภาพที่อัปโหลดได้จาก ImgBB ลงตรงนี้
+          createdAt: new Date()
+        };
+
+        console.log("กำลังบันทึกข้อมูลทั้งหมดลง Firebase:", studentData);
+
+        // 3. ยิงข้อมูลทั้งหมดเข้าไปบันทึกในคอลเลกชัน "students" บน Firestore
+        await addDoc(collection(db, "students"), studentData);
+
+        console.log("บันทึกข้อมูลศิษย์เก่าลงฐานข้อมูลสำเร็จเรียบร้อย!");
+        alert("🎉 บันทึกข้อมูลศิษย์เก่าสำเร็จเรียบร้อยแล้วครับ!");
+        
+        // ล้างข้อมูลในฟอร์มหลังจากเซฟเสร็จ
+        alumniForm.reset();
+
+      } catch (error) {
+        console.error("เกิดข้อผิดพลาดในระบบ:", error);
+        alert("เกิดข้อผิดพลาด: " + error.message);
+      }
+    });
+  } else {
+    console.error("ไม่พบแท็ก <form> ในหน้า HTML กรุณาตรวจสอบโครงสร้างหน้าเว็บ");
   }
-
-  let html = '';
-  data.forEach((student) => {
-    html += `
-      <tr>
-        <td>${student.studentId || '-'}</td>
-        <td>${student.prefix || ''}${student.firstname} ${student.lastname}</td>
-        <td>${student.graduateYear}</td>
-        <td>${student.classroom || '-'}</td>
-        <td>
-          ${student.imageUrl ? `<a href="${student.imageUrl}" target="_blank" class="btn-view">ดูใบจบ</a>` : 'ไม่มีรูป'}
-        </td>
-      </tr>
-    `;
-  });
-  studentTableBody.innerHTML = html;
-}
-
-// ระบบพิมพ์ค้นหาข้อมูลแบบทันใจ (ค้นหาจาก ชื่อ, นามสกุล, รหัส หรือปีที่จบ ได้หมด)
-function handleSearch() {
-  const searchText = searchInput.value.toLowerCase().trim();
-  const filtered = allStudents.filter(student => {
-    const fullName = `${student.firstname} ${student.lastname}`.toLowerCase();
-    const id = (student.studentId || '').toString();
-    const year = student.graduateYear.toString();
-    
-    return fullName.includes(searchText) || id.includes(searchText) || year.includes(searchText);
-  });
-  renderTable(filtered);
-}
-
-// ผูกเหตุการณ์คลิกปุ่มค้นหา และการกดปุ่ม Enter
-searchBtn.addEventListener('click', handleSearch);
-searchInput.addEventListener('keyup', (e) => {
-  if (e.key === 'Enter') handleSearch();
 });
-
-// ให้ระบบเริ่มดึงข้อมูลทันทีที่เปิดหน้าเว็บ
-fetchStudents();
