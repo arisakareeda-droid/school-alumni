@@ -3,138 +3,72 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ระบบจัดการข้อมูลศิษย์เก่า - โรงเรียนบ้านน้ำเค็ม</title>
+
+  <title>Admin</title>
+
   <link rel="stylesheet" href="style.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
 
-  <script>
-    // เช็กว่าถ้ายังไม่ได้ล็อกอิน ให้แจ้งเตือนด้วย SweetAlert2 แล้วเด้งกลับหน้า Login
-    if (sessionStorage.getItem('isAdminLoggedIn') !== 'true') {
-      Swal.fire({
-        icon: 'warning',
-        title: 'ยังไม่ได้เข้าสู่ระบบ',
-        text: 'กรุณาเข้าสู่ระบบก่อนใช้งาน',
-        confirmButtonColor: '#166534'
-      }).then(() => {
-        window.location.href = 'login.html';
-      });
-    }
-  </script>
+<script>
+if(sessionStorage.getItem("isAdminLoggedIn") !== "true"){
+  location.href = "login.html";
+}
+</script>
 
-  <header class="school-header">
-    <div class="header-container">
-      <img src="logo.png" alt="โลโก้โรงเรียนบ้านน้ำเค็ม" class="school-logo" onerror="this.src='https://placehold.co/100x100/15803d/ffffff?text=Logo'">
-      <div class="title-area">
-        <h2 style="margin-bottom: 8px;">ระบบจัดการข้อมูลศิษย์เก่าออนไลน์ (Admin)</h2>
-        <h1 style="margin-bottom: 8px; margin-top: 4px;">โรงเรียนบ้านน้ำเค็ม</h1>
-        <p style="margin-bottom: 4px;">ตำบลบ้านนา อำเภอจะนะ จังหวัดสงขลา</p>
-        <small>สำนักงานเขตพื้นที่การศึกษาประถมศึกษาสงขลา เขต 3</small>
-      </div>
-    </div>
-    <div class="nav-bar" style="padding: 10px 0;">
-      <div class="header-container" style="display: flex; justify-content: space-between; align-items: center;">
-        <span style="color: #fef08a; font-size: 16px; font-weight: 600;">ส่วนงานจัดการและบันทึกข้อมูลหลังบ้าน</span>
-        <a href="index.html" class="back-link" style="color: white; text-decoration: none; font-size: 16px; font-weight: 600; background: rgba(255,255,255,0.25); padding: 6px 18px; border-radius: 20px; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">กลับหน้าหลัก</a>
-      </div>
-    </div>
-  </header>
+<div class="admin-container">
 
-  <main class="main-container">
-    
-    <section class="card-section">
-      <div class="card-header" style="background-color: #fef9c3; border-bottom: 2px solid #fef08a; padding: 15px;">
-        <h3 id="formTitle" style="color: #854d0e; margin: 0;">เพิ่มข้อมูลนักเรียนใหม่</h3>
-      </div>
-      <div class="card-body">
-        <form id="studentForm">
-          <input type="hidden" id="currentDocId"> 
-          
-          <div class="form-group">
-             <label>เลขบัตรประชาชน (สำหรับยืนยันตัวตน)</label>
-              <input type="text" id="idCard" class="login-input" required placeholder="กรอกเลขบัตรประชาชน 13 หลัก">
-          </div>
+  <h1>ระบบจัดการข้อมูลศิษย์เก่า</h1>
 
-          <div class="form-group">
-            <label>รหัสนักเรียน</label>
-            <input type="text" id="studentId" class="login-input" required placeholder="กรอกรหัสนักเรียน">
-          </div>
-          
-          <div class="form-group">
-            <label>คำนำหน้า</label>
-            <select id="prefix" class="login-input">
-              <option value="เด็กชาย">เด็กชาย</option>
-              <option value="เด็กหญิง">เด็กหญิง</option>
-              <option value="">ไม่ระบุ/อื่นๆ</option>
-            </select>
-          </div>
+  <form id="studentForm">
 
-          <div class="form-group">
-            <label>ชื่อ</label>
-            <input type="text" id="firstname" class="login-input" required placeholder="กรอกชื่อจริง">
-          </div>
+    <input type="hidden" id="docId">
 
-          <div class="form-group">
-            <label>นามสกุล</label>
-            <input type="text" id="lastname" class="login-input" required placeholder="กรอกนามสกุล">
-          </div>
+    <input type="text" id="idCard" placeholder="เลขบัตรประชาชน" required>
 
-          <div class="form-group">
-            <label>ปีที่จบการศึกษา (พ.ศ.)</label>
-            <input type="number" id="graduateYear" class="login-input" required placeholder="เช่น 2568">
-          </div>
+    <input type="text" id="studentId" placeholder="รหัสนักเรียน" required>
 
-          <div class="form-group">
-            <label>ห้อง (เช่น ป.6/1)</label>
-            <input type="text" id="classroom" class="login-input" placeholder="เช่น ป.6/1">
-          </div>
+    <select id="prefix">
+      <option value="เด็กชาย">เด็กชาย</option>
+      <option value="เด็กหญิง">เด็กหญิง</option>
+    </select>
 
-          <div class="form-group">
-            <label>แนบรูปใบจบการศึกษา</label>
-            <div class="file-upload-wrapper">
-              <input type="file" id="diplomaFile" accept="image/*">
-            </div>
-            <small class="form-help">*หากต้องการแก้ไขข้อมูลโดยไม่เปลี่ยนรูป ไม่ต้องเลือกไฟล์ใหม่</small>
-          </div>
+    <input type="text" id="firstname" placeholder="ชื่อ" required>
 
-          <div class="button-group" style="display: flex; flex-direction: column; gap: 10px;">
-            <button type="submit" id="submitBtn" class="btn-common btn-submit">บันทึกข้อมูลศิษย์เก่า</button>
-            <button type="button" id="cancelBtn" class="btn-common btn-cancel" style="display: none;">ยกเลิกการแก้ไข</button>
-          </div>
-        </form>
-      </div>
-    </section>
+    <input type="text" id="lastname" placeholder="นามสกุล" required>
 
-    <section class="card-section">
-      <div class="card-header list-header">
-        <h3>รายชื่อนักเรียนทั้งหมดในระบบ</h3>
-      </div>
-      <div class="card-body table-responsive">
-        <table class="custom-table">
-          <thead>
-            <tr>
-              <th>รหัส</th>
-              <th>ชื่อ-นามสกุล</th>
-              <th>ชั้น/ห้อง</th>
-              <th>ปีที่จบ</th>
-              <th>จัดการ</th>
-            </tr>
-          </thead>
-          <tbody id="adminStudentTableBody">
-            <tr>
-              <td colspan="5" style="text-align: center; color: #64748b; padding: 2rem;">กำลังโหลดข้อมูลหลังบ้าน...</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
+    <input type="text" id="classroom" placeholder="ห้อง">
 
-  </main>
+    <input type="number" id="graduateYear" placeholder="ปีที่จบ">
 
-  <script type="module" src="admin.js"></script>
+    <input type="file" id="diplomaFile">
+
+    <button type="submit">
+      บันทึกข้อมูล
+    </button>
+
+  </form>
+
+  <table>
+
+    <thead>
+      <tr>
+        <th>รหัส</th>
+        <th>ชื่อ</th>
+        <th>ห้อง</th>
+        <th>ปีจบ</th>
+        <th>จัดการ</th>
+      </tr>
+    </thead>
+
+    <tbody id="studentTableBody"></tbody>
+
+  </table>
+
+</div>
+
+<script type="module" src="admin.js"></script>
 </body>
 </html>
