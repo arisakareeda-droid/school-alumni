@@ -48,9 +48,9 @@ function renderTable(data) {
     studentTableBody.innerHTML = `
       <tr>
         <td colspan="5" style="text-align:center; padding: 3rem; color: #64748b;">
-          <div style="font-size: 2rem; margin-bottom: 10px;">🔍</div>
+          <div style="font-size: 2rem; margin-bottom: 10px;"></div>
           <strong>ขออภัย ไม่พบรายชื่อที่ค้นหา</strong><br>
-          กรุณาตรวจสอบชื่อ หรือปีที่จบการศึกษาใหม่อีกครั้งครับ
+          กรุณาตรวจสอบชื่อ หรือปีที่จบการศึกษาใหม่อีกครั้ง
         </td>
       </tr>`;
     return;
