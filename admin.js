@@ -1,24 +1,23 @@
-// ฟังก์ชันบันทึกข้อมูล (แทนที่ตัวเดิมได้เลย)
 studentForm.addEventListener('submit', async (e) => {
   e.preventDefault();
-  submitBtn.innerText = "กำลังประมวลผลรูป...";
+  submitBtn.innerText = "กำลังดำเนินการ...";
   submitBtn.disabled = true;
 
   const fileInput = document.getElementById('diplomaFile');
   const file = fileInput.files[0];
   
-  // ฟังก์ชันอ่านไฟล์เป็น Base64
-  const getBase64 = (file) => new Promise((resolve, reject) => {
+  // ฟังก์ชันแปลงรูปเป็นข้อความ (Base64) เพื่อเลี่ยงการอัปโหลดผ่าน API ภายนอก
+  const convertToBase64 = (file) => new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = () => resolve(reader.result);
     reader.onerror = error => reject(error);
   });
 
-  let base64Image = "";
+  let imageUrl = "";
   if (file) {
     try {
-      base64Image = await getBase64(file);
+      imageUrl = await convertToBase64(file);
     } catch (err) {
       Swal.fire('ผิดพลาด', 'ไม่สามารถอ่านไฟล์รูปได้', 'error');
       submitBtn.innerText = "บันทึกข้อมูลศิษย์เก่า";
@@ -34,8 +33,8 @@ studentForm.addEventListener('submit', async (e) => {
     lastname: document.getElementById('lastname').value,
     graduateYear: document.getElementById('graduateYear').value,
     classroom: document.getElementById('classroom').value,
-    imageUrl: base64Image // เก็บรูปในรูปแบบรหัสข้อความ
   };
+  if (imageUrl) studentData.imageUrl = imageUrl;
 
   try {
     const docId = document.getElementById('currentDocId').value;
@@ -44,7 +43,7 @@ studentForm.addEventListener('submit', async (e) => {
       Swal.fire('สำเร็จ', 'แก้ไขข้อมูลเรียบร้อยแล้ว', 'success');
     } else {
       await addDoc(collection(db, "students"), studentData);
-      Swal.fire('สำเร็จ', 'เพิ่มข้อมูลศิษย์เก่าเรียบร้อยแล้ว', 'success');
+      Swal.fire('สำเร็จ', 'เพิ่มข้อมูลเรียบร้อยแล้ว', 'success');
     }
     studentForm.reset();
     loadAdminData();
