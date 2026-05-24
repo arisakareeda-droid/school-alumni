@@ -1,6 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
+// ใส่ค่า Firebase Config ของคุณ
 const firebaseConfig = {
   apiKey: "AIzaSyDA6VlDShC5-3XMCSdpbVMnkKkLEhGf_xY",
   authDomain: "school-alumni-system-a7ccf.firebaseapp.com",
@@ -14,16 +15,15 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// ประกาศตัวแปร Global
+// ประกาศตัวแปร
 let allStudents = [];
 const studentForm = document.getElementById("studentForm");
 const adminStudentTableBody = document.getElementById("adminStudentTableBody");
 const formTitle = document.getElementById("formTitle");
-const submitBtn = document.getElementById("submitBtn");
 const cancelBtn = document.getElementById("cancelBtn");
 const currentDocIdInput = document.getElementById("currentDocId");
 
-// ฟังก์ชันอัปโหลดรูปภาพ
+// ฟังก์ชันอัปโหลดรูป (ผ่าน API ImgBB)
 async function uploadImage(file) {
   if (!file) return "";
   const apiKey = '9104e68e3a436ecc3ab10a3cb31c350a'; 
@@ -35,9 +35,8 @@ async function uploadImage(file) {
   throw new Error("อัปโหลดรูปภาพไม่สำเร็จ");
 }
 
-// ฟังก์ชันดึงข้อมูลและอัปเดตสถิติ
+// ฟังก์ชันดึงข้อมูลมาแสดงผล
 async function fetchStudentsAdmin() {
-  if (!adminStudentTableBody) return;
   try {
     const querySnapshot = await getDocs(collection(db, "students"));
     allStudents = [];
@@ -53,16 +52,11 @@ async function fetchStudentsAdmin() {
           <td>${data.classroom || '-'}</td>
           <td>${data.graduateYear || '-'}</td>
           <td style="text-align:center;">
-            <button class="btn-edit-action" data-id="${docSnap.id}">แก้ไข</button>
-            <button class="btn-delete-action" data-id="${docSnap.id}">ลบ</button>
+            <button class="btn-edit-action" data-id="${docSnap.id}" style="padding: 5px 10px; cursor: pointer;">แก้ไข</button>
+            <button class="btn-delete-action" data-id="${docSnap.id}" style="padding: 5px 10px; cursor: pointer; color: red;">ลบ</button>
           </td>
         </tr>`;
     });
-
-    // อัปเดตสถิติ Dashboard
-    document.getElementById('totalStudents').innerText = allStudents.length + " คน";
-    const years = allStudents.map(s => parseInt(s.graduateYear) || 0);
-    document.getElementById('latestYear').innerText = years.length > 0 ? Math.max(...years) : "-";
 
     adminStudentTableBody.innerHTML = html || '<tr><td colspan="5" style="text-align:center;">ไม่มีข้อมูล</td></tr>';
     addTableEventHandlers();
@@ -71,29 +65,17 @@ async function fetchStudentsAdmin() {
   }
 }
 
-// ฟังก์ชันส่งออก CSV
-window.exportToCSV = function() {
-  let csv = 'รหัสนักเรียน,ชื่อ,นามสกุล,ชั้น,ปีที่จบ\n';
-  allStudents.forEach(s => {
-    csv += `${s.studentId},${s.firstname},${s.lastname},${s.classroom},${s.graduateYear}\n`;
-  });
-  const blob = new Blob(["\ufeff" + csv], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'alumni_data.csv';
-  a.click();
-};
-
-// จัดการเหตุการณ์ในตาราง
+// จัดการเหตุการณ์ในตาราง (ปุ่มแก้ไข/ลบ)
 function addTableEventHandlers() {
-  document.querySelectorAll(".btn-edit-action").forEach(btn => btn.addEventListener("click", async (e) => {
+  document.querySelectorAll(".btn-edit-action").forEach(btn => btn.addEventListener("click", (e) => {
     const s = allStudents.find(x => x.id === e.target.dataset.id);
-    document.getElementById("studentId").value = s.studentId;
-    document.getElementById("firstname").value = s.firstname;
-    document.getElementById("lastname").value = s.lastname;
-    document.getElementById("graduateYear").value = s.graduateYear;
-    document.getElementById("classroom").value = s.classroom;
+    document.getElementById("idCard").value = s.idCard || "";
+    document.getElementById("studentId").value = s.studentId || "";
+    document.getElementById("firstname").value = s.firstname || "";
+    document.getElementById("lastname").value = s.lastname || "";
+    document.getElementById("graduateYear").value = s.graduateYear || "";
+    document.getElementById("classroom").value = s.classroom || "";
+    document.getElementById("prefix").value = s.prefix || "";
     currentDocIdInput.value = s.id;
     formTitle.innerText = "แก้ไขข้อมูลศิษย์เก่า";
     cancelBtn.style.display = "block";
@@ -101,24 +83,25 @@ function addTableEventHandlers() {
   }));
 
   document.querySelectorAll(".btn-delete-action").forEach(btn => btn.addEventListener("click", async (e) => {
-    const docId = e.target.dataset.id;
-    if (confirm("ยืนยันการลบ?")) {
-      await deleteDoc(doc(db, "students", docId));
+    if (confirm("ยืนยันการลบข้อมูลนี้?")) {
+      await deleteDoc(doc(db, "students", e.target.dataset.id));
       fetchStudentsAdmin();
     }
   }));
 }
 
+// จัดการการบันทึกข้อมูล
 studentForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   Swal.fire({ title: 'กำลังบันทึก...', didOpen: () => Swal.showLoading() });
   try {
     const file = document.getElementById("diplomaFile").files[0];
-    let imageUrl = file ? await uploadImage(file) : "";
+    let imageUrl = file ? await uploadImage(file) : null;
     
     const data = {
       idCard: document.getElementById("idCard").value,
       studentId: document.getElementById("studentId").value,
+      prefix: document.getElementById("prefix").value,
       firstname: document.getElementById("firstname").value,
       lastname: document.getElementById("lastname").value,
       graduateYear: document.getElementById("graduateYear").value,
@@ -144,7 +127,6 @@ function resetFormToInsertMode() {
   currentDocIdInput.value = "";
   formTitle.innerText = "เพิ่มข้อมูลนักเรียนใหม่";
   cancelBtn.style.display = "none";
-  document.getElementById("imagePreviewContainer").style.display = "none";
 }
 
 cancelBtn.addEventListener("click", resetFormToInsertMode);
