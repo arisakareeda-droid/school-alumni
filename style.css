@@ -1,286 +1,79 @@
-/* ตั้งค่าเริ่มต้นพื้นฐาน */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: 'Sarabun', sans-serif;
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:sans-serif;
 }
 
-body {
-  background-color: #f8fafc;
-  color: #1e293b;
-  min-height: 100vh;
+body{
+  background:#f1f5f9;
 }
 
-.header-container {
-  width: 92%;
-  max-width: 1200px;
-  margin: 0 auto;
+.home-container,
+.login-container,
+.admin-container,
+.search-container{
+
+  width:90%;
+  max-width:1000px;
+  margin:40px auto;
+  background:white;
+  padding:30px;
+  border-radius:15px;
 }
 
-/* ส่วนหัวข้อโรงเรียน (ธีมเขียว-เหลือง) */
-.school-header {
-  background: linear-gradient(135deg, #15803d 0%, #166534 100%); /* สีเขียวเข้มดูภูมิฐาน */
-  color: #ffffff;
-  padding-top: 2rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  border-bottom: 5px solid #eab308; /* เส้นคาดแถบสีเหลืองทอง */
+.home-buttons{
+  margin-top:30px;
+  display:flex;
+  gap:20px;
 }
 
-.school-header .header-container {
-  display: flex;
-  align-items: center;
-  gap: 25px;
-  padding-bottom: 1.5rem;
+.home-btn{
+  padding:15px 20px;
+  color:white;
+  text-decoration:none;
+  border-radius:10px;
 }
 
-/* ตกแต่งโลโก้ */
-.school-logo {
-  width: 90px;
-  height: 90px;
-  object-fit: contain;
-  background-color: white;
-  padding: 5px;
-  border-radius: 50%;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
-  border: 3px solid #eab308; /* ขอบโลโก้สีเหลือง */
+.green{
+  background:green;
 }
 
-.title-area h2 {
-  font-size: 14px;
-  font-weight: 300;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: #fef08a; /* สีเหลืองอ่อน */
+.yellow{
+  background:orange;
 }
 
-.title-area h1 {
-  font-size: 28px;
-  font-weight: 700;
-  margin: 2px 0 5px 0;
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+form{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  margin-top:20px;
 }
 
-.title-area p {
-  font-size: 15px;
-  opacity: 0.9;
+input,
+select,
+button{
+
+  padding:12px;
+  border-radius:10px;
+  border:1px solid #ccc;
 }
 
-.title-area small {
-  font-size: 12px;
-  opacity: 0.75;
-  display: block;
-  margin-top: 2px;
+button{
+  background:green;
+  color:white;
+  border:none;
+  cursor:pointer;
 }
 
-/* แถบเมนูด้านล่าง Header */
-.nav-bar {
-  background-color: rgba(0, 0, 0, 0.15);
-  padding: 10px 0;
+table{
+  width:100%;
+  margin-top:30px;
+  border-collapse:collapse;
 }
 
-.back-link {
-  color: #fef08a;
-  text-decoration: none;
-  font-size: 14px;
-  transition: all 0.2s;
-  display: inline-block;
-}
-
-.back-link:hover {
-  color: #ffffff;
-  transform: translateX(-3px);
-}
-
-/* จัดเลย์เอาต์หน้าจอหลัก */
-.main-container {
-  width: 92%;
-  max-width: 1200px;
-  margin: 2rem auto;
-  display: grid;
-  grid-template-columns: 1fr 1.6fr;
-  gap: 30px;
-}
-
-@media (max-width: 900px) {
-  .main-container {
-    grid-template-columns: 1fr;
-  }
-  .school-header .header-container {
-    flex-direction: column;
-    text-align: center;
-  }
-}
-
-/* ตกแต่งบล็อกกล่องข้อความ (Card) */
-.card-section {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  border: 1px solid #e2e8f0;
-  overflow: hidden;
-}
-
-.card-header {
-  background-color: #f0fdf4; /* พื้นหลังเขียวอ่อนมาก ๆ */
-  padding: 15px 20px;
-  border-bottom: 2px solid #bbf7d0;
-}
-
-.card-header h3 {
-  color: #166534;
-  font-size: 18px;
-  font-weight: 600;
-}
-
-.list-header {
-  background-color: #fef9c3; /* พื้นหลังเหลืองอ่อนสำหรับฝั่งตาราง */
-  border-bottom: 2px solid #fef08a;
-}
-
-.list-header h3 {
-  color: #854d0e;
-}
-
-.card-body {
-  padding: 20px;
-}
-
-/* ตกแต่งฟอร์มอินพุต */
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-bottom: 15px;
-}
-
-.form-group label {
-  font-size: 14px;
-  font-weight: 600;
-  color: #334155;
-}
-
-.form-group input[type="text"],
-.form-group input[type="number"],
-.form-group select {
-  padding: 10px 12px;
-  border-radius: 8px;
-  border: 1px solid #cbd5e1;
-  font-size: 14px;
-  outline: none;
-  transition: all 0.2s;
-}
-
-.form-group input:focus,
-.form-group select:focus {
-  border-color: #15803d;
-  box-shadow: 0 0 0 3px rgba(22, 101, 52, 0.15);
-}
-
-.file-upload-wrapper {
-  border: 2px dashed #cbd5e1;
-  padding: 10px;
-  border-radius: 8px;
-  background-color: #f8fafc;
-  text-align: center;
-}
-
-.form-help {
-  font-size: 11px;
-  color: #64748b;
-  margin-top: 2px;
-}
-
-/* ปุ่มกดต่าง ๆ */
-.button-group {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-top: 10px;
-}
-
-.btn-submit {
-  padding: 12px;
-  background: #15803d; /* ปุ่มบันทึกสีเขียว */
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 15px;
-  font-weight: 600;
-  transition: background 0.2s;
-  box-shadow: 0 2px 4px rgba(21, 128, 61, 0.2);
-}
-
-.btn-submit:hover {
-  background: #166534;
-}
-
-.btn-cancel {
-  padding: 10px;
-  background: #64748b;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: background 0.2s;
-}
-
-.btn-cancel:hover {
-  background: #475569;
-}
-
-/* ตกแต่งตารางรายชื่อศิษย์เก่า */
-.table-responsive {
-  overflow-x: auto;
-}
-
-.custom-table {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: left;
-  font-size: 14px;
-}
-
-.custom-table th {
-  background-color: #f1f5f9;
-  color: #475569;
-  font-weight: 600;
-  padding: 12px 10px;
-  border-bottom: 2px solid #e2e8f0;
-}
-
-.custom-table td {
-  padding: 12px 10px;
-  border-bottom: 1px solid #e2e8f0;
-  vertical-align: middle;
-}
-
-.custom-table tr:hover {
-  background-color: #f8fafc;
-}
-
-/* ปุ่มแก้ไข และ ปุ่มลบ ในตาราง */
-.custom-table .btn-edit {
-  background: #eab308 !important; /* สีเหลืองทอง */
-  color: #000000 !important;
-  font-weight: 600;
-}
-
-.custom-table .btn-edit:hover {
-  background: #ca8a04 !important;
-}
-
-.custom-table .btn-delete {
-  background: #ef4444 !important; /* สีแดง */
-}
-
-.custom-table .btn-delete:hover {
-  background: #dc2626 !important;
-}
-
-.back-link:hover, .admin-link:hover {
-  background: rgba(255, 255, 255, 0.35) !important;
-  transform: translateY(-1px);
+th,
+td{
+  border:1px solid #ddd;
+  padding:12px;
 }
