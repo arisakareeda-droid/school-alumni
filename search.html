@@ -1,22 +1,3 @@
-<script>
-  // ถ้ายังไม่ได้ล็อกอิน ให้เด้งไปหน้าถามรหัสผ่าน
-  if (sessionStorage.getItem('isAlumniLoggedIn') !== 'true') {
-    Swal.fire({
-      title: 'กรุณาใส่รหัสผ่านเพื่อเข้าใช้งาน',
-      input: 'password',
-      inputPlaceholder: 'รหัสผ่านสำหรับศิษย์เก่า',
-      confirmButtonText: 'เข้าสู่ระบบ',
-      allowOutsideClick: false,
-      inputValidator: (value) => {
-        if (value !== 'alumni2569') { // ตั้งรหัสผ่านที่นี่
-          return 'รหัสผ่านไม่ถูกต้อง!';
-        }
-      }
-    }).then(() => {
-      sessionStorage.setItem('isAlumniLoggedIn', 'true');
-    });
-  }
-</script>
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -27,117 +8,109 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  
   <style>
-    /* ปรับแต่งสไตล์ช่องกรอกคำค้นหาให้นุ่มนวล มีมิติ */
-    .search-custom-input {
-      width: 100%;
-      padding: 12px 16px;
-      border: 1px solid #cbd5e1;
-      border-radius: 8px; /* ขอบโค้งมนล้อไปกับกล่อง Card */
-      font-family: 'Sarabun', sans-serif;
-      font-size: 15px;
-      box-sizing: border-box;
-      transition: all 0.2s ease;
-      background-color: #f8fafc;
-    }
-    /* เวลาเอาเมาส์ไปคลิกพิมพ์ ให้กรอบเรืองแสงสีเขียวธรรมชาติ */
-    .search-custom-input:focus {
-      outline: none;
-      background-color: #ffffff;
-      border-color: #166534;
-      box-shadow: 0 0 0 3px rgba(22, 101, 52, 0.12);
-    }
-
-    /* ปรับแต่งปุ่มกดค้นหาให้สวยเด่น โค้งมนเข้าชุดกัน */
-    .search-custom-btn {
-      width: auto;
-      padding: 0 28px;
-      white-space: nowrap;
-      background-color: #166534; /* สีเขียวหลักของโรงเรียน */
-      color: white;
-      border: none;
-      border-radius: 8px; /* โค้งมนเท่ากับช่องกรอกข้อมูล */
-      font-family: 'Sarabun', sans-serif;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-      transition: all 0.2s ease;
-    }
-    /* เอฟเฟกต์เวลาเมาส์ชี้ปุ่มค้นหา */
-    .search-custom-btn:hover {
-      background-color: #14532d; /* เขียวเข้มขึ้นเล็กน้อย */
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-      transform: translateY(-1px);
-    }
-    /* เอฟเฟกต์เวลากดปุ่ม */
-    .search-custom-btn:active {
-      transform: translateY(0);
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-    }
+    .search-custom-input { width: 100%; padding: 12px 16px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 15px; box-sizing: border-box; background-color: #f8fafc; }
+    .search-custom-input:focus { outline: none; border-color: #166534; box-shadow: 0 0 0 3px rgba(22, 101, 52, 0.12); }
+    .search-custom-btn { width: auto; padding: 0 28px; background-color: #166534; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
+    .search-custom-btn:hover { background-color: #14532d; }
   </style>
 </head>
 <body>
 
+  <script>
+    if (sessionStorage.getItem('isAlumniLoggedIn') !== 'true') {
+      Swal.fire({
+        title: 'กรุณาใส่รหัสผ่านเพื่อเข้าใช้งาน',
+        input: 'password',
+        inputPlaceholder: 'รหัสผ่านสำหรับศิษย์เก่า',
+        confirmButtonText: 'เข้าสู่ระบบ',
+        allowOutsideClick: false,
+        inputValidator: (value) => {
+          if (value !== 'alumni2569') { return 'รหัสผ่านไม่ถูกต้อง!'; }
+        }
+      }).then(() => {
+        sessionStorage.setItem('isAlumniLoggedIn', 'true');
+      });
+    }
+  </script>
+
   <header class="school-header">
     <div class="header-container">
-      <img src="logo.png" alt="โลโก้โรงเรียนบ้านน้ำเค็ม" class="school-logo" onerror="this.src='https://placehold.co/100x100/15803d/ffffff?text=Logo'">
+      <img src="logo.png" alt="โลโก้" class="school-logo" onerror="this.src='https://placehold.co/100x100/15803d/ffffff?text=Logo'">
       <div class="title-area">
-        <h2 style="margin-bottom: 8px;">ระบบบริการค้นหาข้อมูลศิษย์เก่าออนไลน์</h2>
-        <h1 style="margin-bottom: 8px; margin-top: 4px;">โรงเรียนบ้านน้ำเค็ม</h1>
-        <p style="margin-bottom: 4px;">ตำบลบ้านนา อำเภอจะนะ จังหวัดสงขลา</p>
-        <small>สำนักงานเขตพื้นที่การศึกษาประถมศึกษาสงขลา เขต 3</small>
-      </div>
-    </div>
-    <div class="nav-bar" style="padding: 10px 0;">
-      <div class="header-container" style="display: flex; justify-content: space-between; align-items: center;">
-        <span style="color: #fef08a; font-size: 16px; font-weight: 600;">ยินดีต้อนรับสู่ระบบฐานข้อมูลศิษย์เก่า</span>
-        <a href="index.html" class="admin-link">เข้าสู่ระบบแอดมิน</a>
+        <h2>ระบบบริการค้นหาข้อมูลศิษย์เก่าออนไลน์</h2>
+        <h1>โรงเรียนบ้านน้ำเค็ม</h1>
       </div>
     </div>
   </header>
 
-  <main class="main-container" style="display: block; max-width: 1000px; margin: 2rem auto; width: 92%;">
-    
+  <main class="main-container" style="max-width: 1000px; margin: 2rem auto; width: 92%;">
     <section class="card-section" style="margin-bottom: 25px;">
-      <div class="card-header">
-        <h3>ค้นหารายชื่อศิษย์เก่า</h3>
-      </div>
+      <div class="card-header"><h3>ค้นหาข้อมูลศิษย์เก่าด้วยเลขบัตรประชาชน</h3></div>
       <div class="card-body">
         <div style="display: flex; gap: 12px;">
-          <input type="text" id="searchInput" class="search-custom-input" placeholder="พิมพ์ชื่อ, นามสกุล หรือปีที่จบ พ.ศ. เพื่อค้นหาข้อมูล...">
-          <button id="searchBtn" class="search-custom-btn">ค้นหาข้อมูล</button>
+          <input type="text" id="searchInput" class="search-custom-input" placeholder="กรอกเลขบัตรประชาชน 13 หลัก">
+          <button id="searchBtn" class="search-custom-btn">ค้นหา</button>
         </div>
-        <small class="form-help" style="margin-top: 10px; display: block;">* สามารถค้นหาพร้อมกันได้ เช่น พิมพ์ชื่อ หรือปี พ.ศ. ที่จบการศึกษา</small>
       </div>
     </section>
 
     <section class="card-section">
-      <div class="card-header list-header">
-        <h3>ผลการค้นหาข้อมูลนักเรียน</h3>
-      </div>
+      <div class="card-header"><h3>ผลการค้นหา</h3></div>
       <div class="card-body table-responsive">
         <table class="custom-table">
           <thead>
             <tr>
-              <th style="width: 15%;">รหัสนักเรียน</th>
-              <th style="width: 35%;">ชื่อ-นามสกุล</th>
-              <th style="width: 15%;">ชั้น/ห้อง</th>
-              <th style="width: 15%;">ปีที่จบ (พ.ศ.)</th>
-              <th style="width: 20%; text-align: center;">ใบจบการศึกษา</th>
+              <th>รหัสนักเรียน</th>
+              <th>ชื่อ-นามสกุล</th>
+              <th>ชั้น/ห้อง</th>
+              <th>ปีที่จบ</th>
+              <th>ใบจบการศึกษา</th>
             </tr>
           </thead>
           <tbody id="studentTableBody">
-            <tr>
-              <td colspan="5" style="text-align: center; color: #64748b; padding: 2.5rem;">กำลังโหลดฐานข้อมูลศิษย์เก่า...</td>
-            </tr>
+            <tr><td colspan="5" style="text-align: center; padding: 2.5rem;">กรอกเลขบัตรประชาชนเพื่อค้นหาข้อมูลของท่าน</td></tr>
           </tbody>
         </table>
       </div>
     </section>
-
   </main>
 
-  <script type="module" src="script.js"></script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = { /* ใส่ค่า config เดิมของคุณตรงนี้ */ };
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    let allStudents = [];
+    async function init() {
+      const querySnapshot = await getDocs(collection(db, "students"));
+      querySnapshot.forEach(doc => allStudents.push(doc.data()));
+    }
+    init();
+
+    document.getElementById('searchBtn').addEventListener('click', () => {
+      const idCard = document.getElementById('searchInput').value.trim();
+      const student = allStudents.find(s => s.idCard === idCard);
+      const tbody = document.getElementById('studentTableBody');
+
+      if (student) {
+        tbody.innerHTML = `<tr>
+          <td>${student.studentId}</td>
+          <td>${student.firstname} ${student.lastname}</td>
+          <td>${student.classroom}</td>
+          <td>${student.graduateYear}</td>
+          <td><a href="${student.imageUrl}" target="_blank">ดูใบจบ</a></td>
+        </tr>`;
+      } else {
+        Swal.fire('ไม่พบข้อมูล', 'โปรดตรวจสอบเลขบัตรประชาชนอีกครั้ง', 'error');
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">ไม่พบข้อมูล</td></tr>';
+      }
+    });
+  </script>
 </body>
 </html>
