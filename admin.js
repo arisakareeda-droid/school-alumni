@@ -1,8 +1,8 @@
 // 1. นำเข้าโมดูล Firebase สำหรับเชื่อมต่อฐานข้อมูล
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-// ตั้งค่า Firebase (ใช้คอนฟิกเดิมของคุณ)
+// ตั้งค่า Firebase (คอนฟิกประจำโปรเจกต์ของคุณ)
 const firebaseConfig = {
   apiKey: "AIzaSyDA6VlDShC5-3XMCSdpbVMnkKkLEhGf_xY",
   authDomain: "school-alumni-system-a7ccf.firebaseapp.com",
@@ -16,6 +16,9 @@ const firebaseConfig = {
 // เริ่มต้นใช้งาน Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+
+// ประกาศตัวแปรสำหรับตารางฝั่งแอดมิน
+let studentTableBodyAdmin = null;
 
 // 2. ฟังก์ชันอัปโหลดรูปภาพผ่าน ImgBB
 async function uploadImage(file) {
@@ -41,28 +44,66 @@ async function uploadImage(file) {
   }
 }
 
-// 3. ดักจับเหตุการณ์ตอนกดปุ่ม "บันทึกข้อมูลศิษย์เก่า"
+// 3. ฟังก์ชันดึงข้อมูลจาก Firebase มาแสดงในตารางหน้าแอดมิน (ฝั่งขวา)
+async function fetchStudentsAdmin() {
+  studentTableBodyAdmin = document.getElementById('studentTableBody') || document.querySelector(".custom-table tbody") || document.querySelector("table tbody");
+  
+  if (!studentTableBodyAdmin) return;
+
+  try {
+    const querySnapshot = await getDocs(collection(db, "students"));
+    let html = '';
+    
+    if (querySnapshot.empty) {
+      studentTableBodyAdmin.innerHTML = `<tr><td colspan="5" style="text-align:center;">ยังไม่มีข้อมูลนักเรียนในระบบ</td></tr>`;
+      return;
+    }
+
+    querySnapshot.forEach((doc) => {
+      const student = doc.data();
+      html += `
+        <tr>
+          <td>${student.studentId || '-'}</td>
+          <td>${student.prefix || ''}${student.firstname || ''} ${student.lastname || ''}</td>
+          <td>${student.classroom || '-'}</td>
+          <td>${student.graduateYear || '-'}</td>
+          <td style="text-align:center;">
+            ${student.imageUrl ? `<a href="${student.imageUrl}" target="_blank" style="color:#166534; font-weight:600; text-decoration:none;">ดูใบจบ</a>` : 'ไม่มีรูป'}
+          </td>
+        </tr>
+      `;
+    });
+    
+    studentTableBodyAdmin.innerHTML = html;
+  } catch (error) {
+    console.error("เกิดข้อผิดพลาดในการดึงข้อมูล:", error);
+    studentTableBodyAdmin.innerHTML = `<tr><td colspan="5" style="color:red; text-align:center;">ไม่สามารถดึงข้อมูลจาก Firebase ได้</td></tr>`;
+  }
+}
+
+// 4. ทำงานเมื่อโหลดหน้าเว็บสำเร็จ
 document.addEventListener("DOMContentLoaded", () => {
+  // สั่งให้โหลดรายชื่อมาแสดงในตารางฝั่งขวาทันทีเมื่อเปิดหน้าเว็บ
+  fetchStudentsAdmin();
+
   const alumniForm = document.querySelector("form") || document.getElementById("alumniForm");
 
   if (alumniForm) {
     alumniForm.addEventListener("submit", async (e) => {
-      e.preventDefault(); // หยุดการรีเฟรชหน้าจอ
+      e.preventDefault(); 
       console.log("กำลังเริ่มกระบวนการบันทึกข้อมูล...");
 
-      // --- วิธีใหม่: ดึงตามลำดับช่องกรอกในหน้าเว็บตรงๆ เพื่อป้องกันเรื่อง ID ไม่ตรง ---
+      // ดึงค่าตามลำดับช่องกรอกข้อมูลในหน้าเว็บเพื่อป้องกัน ID ผิดพลาด
       const inputs = alumniForm.querySelectorAll("input");
       const select = alumniForm.querySelector("select");
 
-      // ดึงค่าตามลำดับที่ปรากฏบนหน้าจอเว็บของคุณ
-      const studentId = inputs[0]?.value || "";      // ช่องที่ 1: รหัสนักเรียน
-      const prefix = select?.value || "เด็กชาย";       // ช่อง Dropdown เลือกคำนำหน้า
-      const firstname = inputs[1]?.value || "";     // ช่องที่ 2: ชื่อ
-      const lastname = inputs[2]?.value || "";      // ช่องที่ 3: นามสกุล
-      const graduateYear = inputs[3]?.value || "";  // ช่องที่ 4: ปีที่จบการศึกษา
-      const classroom = inputs[4]?.value || "";     // ช่องที่ 5: ห้องเรียน
+      const studentId = inputs[0]?.value || "";      
+      const prefix = select?.value || "เด็กชาย";       
+      const firstname = inputs[1]?.value || "";     
+      const lastname = inputs[2]?.value || "";      
+      const graduateYear = inputs[3]?.value || "";  
+      const classroom = inputs[4]?.value || "";     
       
-      // ช่องเลือกไฟล์รูปภาพ (อันสุดท้าย)
       const imageInput = alumniForm.querySelector("input[type='file']");    
       const file = imageInput?.files[0];
 
@@ -72,15 +113,21 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       try {
+        // เปลี่ยนข้อความปุ่มระหว่างอัปโหลดป้องกันการกดซ้ำ
+        const submitBtn = alumniForm.querySelector("button[type='submit']") || alumniForm.querySelector(".btn-submit");
+        const originalBtnText = submitBtn ? submitBtn.innerText : "บันทึกข้อมูลศิษย์เก่า";
+        if (submitBtn) { submitBtn.innerText = "กำลังบันทึกข้อมูล... กรุณารอสักครู่"; submitBtn.disabled = true; }
+
         console.log("กำลังส่งรูปภาพไปเก็บที่ ImgBB...");
         const imageUrl = await uploadImage(file);
 
         if (!imageUrl) {
           alert("ไม่สามารถดึงลิงก์รูปภาพจาก ImgBB ได้");
+          if (submitBtn) { submitBtn.innerText = originalBtnText; submitBtn.disabled = false; }
           return;
         }
 
-        // จัดเตรียมโครงสร้างข้อมูลให้ตรงเป๊ะกับหน้าแสดงผลตารางศิษย์เก่าของคุณ
+        // จัดโครงสร้างข้อมูลให้ตรงกับตารางแสดงผล
         const studentData = {
           studentId: studentId.trim(),
           prefix: prefix,
@@ -92,20 +139,28 @@ document.addEventListener("DOMContentLoaded", () => {
           createdAt: new Date()
         };
 
-        console.log("กำลังเซฟข้อมูลทั้งหมดลง Firebase:", studentData);
+        console.log("กำลังเซฟข้อมูลลง Firebase:", studentData);
 
-        // ยิงข้อมูลเข้า Firestore ตัวจริงคอลเลกชัน "students"
+        // ยิงข้อมูลเข้าคอลเลกชัน "students"
         await addDoc(collection(db, "students"), studentData);
 
         alert("🎉 บันทึกข้อมูลศิษย์เก่าและอัปโหลดรูปภาพสำเร็จเรียบร้อยแล้วครับ!");
-        alumniForm.reset(); // ล้างฟอร์มกรอกใหม่ได้เลย
+        
+        // ล้างฟอร์มกรอกข้อมูลเดิมออก
+        alumniForm.reset();
+        
+        // คืนค่าปุ่มบันทึก
+        if (submitBtn) { submitBtn.innerText = originalBtnText; submitBtn.disabled = false; }
+
+        // สั่งให้ตารางฝั่งขวาอัปเดตข้อมูลดึงรายชื่อใหม่ล่าสุดทันทีโดยไม่ต้องรีเฟรชหน้าจอ!
+        fetchStudentsAdmin();
 
       } catch (error) {
         console.error("เกิดข้อผิดพลาดในระบบ:", error);
         alert("เกิดข้อผิดพลาด: " + error.message);
+        const submitBtn = alumniForm.querySelector("button[type='submit']");
+        if (submitBtn) { submitBtn.disabled = false; }
       }
     });
-  } else {
-    console.error("ไม่พบฟอร์มบนหน้า HTML");
   }
 });
