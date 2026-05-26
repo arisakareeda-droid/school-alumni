@@ -1,124 +1,107 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ระบบค้นหาข้อมูลศิษย์เก่า - โรงเรียนบ้านน้ำเค็ม</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
-  <style>
-    /* ปรับแต่งสไตล์ช่องกรอกคำค้นหาให้นุ่มนวล มีมิติ */
-    .search-custom-input {
-      width: 100%;
-      padding: 12px 16px;
-      border: 1px solid #cbd5e1;
-      border-radius: 8px; /* ขอบโค้งมนล้อไปกับกล่อง Card */
-      font-family: 'Sarabun', sans-serif;
-      font-size: 15px;
-      box-sizing: border-box;
-      transition: all 0.2s ease;
-      background-color: #f8fafc;
-    }
-    /* เวลาเอาเมาส์ไปคลิกพิมพ์ ให้กรอบเรืองแสงสีเขียวธรรมชาติ */
-    .search-custom-input:focus {
-      outline: none;
-      background-color: #ffffff;
-      border-color: #166534;
-      box-shadow: 0 0 0 3px rgba(22, 101, 52, 0.12);
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>โรงเรียนบ้านน้ำเค็ม - ระบบข้อมูลศิษย์เก่า</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+/* ===== RESET ===== */
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
 
-    /* ปรับแต่งปุ่มกดค้นหาให้สวยเด่น โค้งมนเข้าชุดกัน */
-    .search-custom-btn {
-      width: auto;
-      padding: 0 28px;
-      white-space: nowrap;
-      background-color: #166534; /* สีเขียวหลักของโรงเรียน */
-      color: white;
-      border: none;
-      border-radius: 8px; /* โค้งมนเท่ากับช่องกรอกข้อมูล */
-      font-family: 'Sarabun', sans-serif;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-      transition: all 0.2s ease;
-    }
-    /* เอฟเฟกต์เวลาเมาส์ชี้ปุ่มค้นหา */
-    .search-custom-btn:hover {
-      background-color: #14532d; /* เขียวเข้มขึ้นเล็กน้อย */
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-      transform: translateY(-1px);
-    }
-    /* เอฟเฟกต์เวลากดปุ่ม */
-    .search-custom-btn:active {
-      transform: translateY(0);
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-    }
-  </style>
+html,body{
+  width:100%;
+  height:100%;
+  font-family:'Sarabun',sans-serif;
+  overflow:hidden;
+}
+
+/* ===== BACKGROUND - สีขาวล้วนทั้งหน้า ===== */
+body{
+  width:100vw;
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background-color: #ffffff;
+}
+
+/* ===== CONTAINER (ไม่มีกรอบ) ===== */
+.welcome-container{
+  width:90%;
+  max-width:600px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  padding:40px;
+  /* นำ background, border, และ shadow ออกเพื่อให้กลมกลืนกับพื้นหลัง */
+}
+
+/* ===== LOGO ===== */
+.logo{
+  width:160px;
+  height:160px;
+  object-fit:contain;
+  background:white;
+  padding:15px;
+  border-radius:50%;
+  box-shadow:0 10px 25px rgba(0,0,0,0.1);
+  transition:0.3s ease;
+}
+
+.logo:hover{ transform:scale(1.05) rotate(-2deg); }
+
+/* ===== TEXT ===== */
+h2{ margin:25px 0 10px; font-size:32px; color:#0f172a; }
+p{ font-size:18px; color:#475569; line-height:1.7; margin-bottom:40px; }
+
+/* ===== BUTTON ===== */
+.btn-role{
+  display:block;
+  width:100%;
+  max-width:400px;
+  padding:18px;
+  margin:12px 0;
+  border-radius:18px;
+  text-decoration:none;
+  font-weight:700;
+  font-size:18px;
+  position:relative;
+  overflow:hidden;
+  transition:0.3s ease;
+}
+
+.btn-role:hover{ transform:translateY(-4px); box-shadow:0 10px 20px rgba(0,0,0,0.15); }
+.btn-role:active{ transform:scale(0.97); }
+
+/* Shimmer Effect */
+.btn-role::before{
+  content:"";
+  position:absolute; top:0; left:-100%; width:100%; height:100%;
+  background:rgba(255,255,255,0.25);
+  transform:skewX(-20deg); transition:0.6s;
+}
+.btn-role:hover::before{ left:120%; }
+
+.btn-alumni{ background:linear-gradient(135deg,#16a34a,#22c55e); color:white; }
+.btn-admin{ background:linear-gradient(135deg,#0ea5e9,#2563eb); color:white; }
+</style>
 </head>
 <body>
 
-  <header class="school-header">
-    <div class="header-container">
-      <img src="logo.png" alt="โลโก้โรงเรียนบ้านน้ำเค็ม" class="school-logo" onerror="this.src='https://placehold.co/100x100/15803d/ffffff?text=Logo'">
-      <div class="title-area">
-        <h2 style="margin-bottom: 8px;">ระบบบริการค้นหาข้อมูลศิษย์เก่าออนไลน์</h2>
-        <h1 style="margin-bottom: 8px; margin-top: 4px;">โรงเรียนบ้านน้ำเค็ม</h1>
-        <p style="margin-bottom: 4px;">ตำบลบ้านนา อำเภอจะนะ จังหวัดสงขลา</p>
-        <small>สำนักงานเขตพื้นที่การศึกษาประถมศึกษาสงขลา เขต 3</small>
-      </div>
-    </div>
-    <div class="nav-bar" style="padding: 10px 0;">
-      <div class="header-container" style="display: flex; justify-content: space-between; align-items: center;">
-        <span style="color: #fef08a; font-size: 16px; font-weight: 600;">ยินดีต้อนรับสู่ระบบฐานข้อมูลศิษย์เก่า</span>
-        <a href="login.html" class="admin-link" style="color: white; text-decoration: none; font-size: 16px; font-weight: 600; background: rgba(255,255,255,0.25); padding: 6px 18px; border-radius: 20px; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">เข้าสู่ระบบแอดมิน</a>
-      </div>
-    </div>
-  </header>
+<div class="welcome-container">
+  <img src="logo.png" class="logo" onerror="this.src='https://placehold.co/300x300/ffffff/16a34a?text=LOGO'">
+  <h2>โรงเรียนบ้านน้ำเค็ม</h2>
+  <p>ระบบข้อมูลศิษย์เก่าออนไลน์<br>กรุณาเลือกประเภทการเข้าใช้งาน</p>
+  <a href="std-search.html" class="btn-role btn-alumni">สำหรับศิษย์เก่า</a>
+  <a href="login.html" class="btn-role btn-admin">สำหรับบุคลากร / ผู้ดูแลระบบ</a>
+</div>
 
-  <main class="main-container" style="display: block; max-width: 1000px; margin: 2rem auto; width: 92%;">
-    
-    <section class="card-section" style="margin-bottom: 25px;">
-      <div class="card-header">
-        <h3>ค้นหารายชื่อศิษย์เก่า</h3>
-      </div>
-      <div class="card-body">
-        <div style="display: flex; gap: 12px;">
-          <input type="text" id="searchInput" class="search-custom-input" placeholder="พิมพ์ชื่อ, นามสกุล หรือปีที่จบ พ.ศ. เพื่อค้นหาข้อมูล...">
-          <button id="searchBtn" class="search-custom-btn">ค้นหาข้อมูล</button>
-        </div>
-        <small class="form-help" style="margin-top: 10px; display: block;">* สามารถค้นหาพร้อมกันได้ เช่น พิมพ์ชื่อ หรือปี พ.ศ. ที่จบการศึกษา</small>
-      </div>
-    </section>
-
-    <section class="card-section">
-      <div class="card-header list-header">
-        <h3>ผลการค้นหาข้อมูลนักเรียน</h3>
-      </div>
-      <div class="card-body table-responsive">
-        <table class="custom-table">
-          <thead>
-            <tr>
-              <th style="width: 15%;">รหัสนักเรียน</th>
-              <th style="width: 35%;">ชื่อ-นามสกุล</th>
-              <th style="width: 15%;">ชั้น/ห้อง</th>
-              <th style="width: 15%;">ปีที่จบ (พ.ศ.)</th>
-              <th style="width: 20%; text-align: center;">ใบจบการศึกษา</th>
-            </tr>
-          </thead>
-          <tbody id="studentTableBody">
-            <tr>
-              <td colspan="5" style="text-align: center; color: #64748b; padding: 2.5rem;">กำลังโหลดฐานข้อมูลศิษย์เก่า...</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-  </main>
-
-  <script type="module" src="script.js"></script>
 </body>
 </html>
