@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ระบบค้นหาข้อมูลศิษย์เก่า - โรงเรียนบ้านน้ำเค็ม</title>
+  <link rel="icon" type="image/png" href="logo.png">
   <link rel="stylesheet" href="style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -57,6 +58,12 @@
       transform: translateY(0);
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
     }
+
+    .custom-table th:nth-child(3),
+    .custom-table td:nth-child(3) {
+        text-align: left !important;
+        padding-left: 0px !important;
+    }
   </style>
 </head>
 <body>
@@ -98,31 +105,31 @@
           <input type="text" id="searchInput" class="search-custom-input" placeholder="พิมพ์ชื่อ, นามสกุล หรือปีที่จบ พ.ศ. เพื่อค้นหาข้อมูล...">
           <button id="searchBtn" class="search-custom-btn">ค้นหาข้อมูล</button>
         </div>
-        <small class="form-help" style="margin-top: 10px; display: block;">* สามารถค้นหาพร้อมกันได้ เช่น พิมพ์ชื่อ หรือปี พ.ศ. ที่จบการศึกษา</small>
+        <small class="form-help" style="margin-top: 10px; display: block;">* สามารถค้นหาพร้อมกันได้ เช่น พิมพ์ชื่อ เลขบัตรประชาชน หรือปี พ.ศ. ที่จบการศึกษา</small>
       </div>
     </section>
 
     <section class="card-section">
       <div class="card-header list-header">
-        <h3>ผลการค้นหาข้อมูลนักเรียน</h3>
+        <h3 id="resultTitle">ข้อมูลนักเรียน</h3>
       </div>
       <div class="card-body table-responsive">
-        <table class="custom-table">
-          <thead>
-            <tr>
-              <th style="width: 15%;">รหัสนักเรียน</th>
-              <th style="width: 35%;">ชื่อ-นามสกุล</th>
-              <th style="width: 15%;">ชั้น/ห้อง</th>
-              <th style="width: 15%;">ปีที่จบ (พ.ศ.)</th>
-              <th style="width: 20%; text-align: center;">ใบจบการศึกษา</th>
-            </tr>
-          </thead>
-          <tbody id="studentTableBody">
-            <tr>
-              <td colspan="5" style="text-align: center; color: #64748b; padding: 2.5rem;">กำลังโหลดฐานข้อมูลศิษย์เก่า...</td>
-            </tr>
-          </tbody>
-        </table>
+         <table class="custom-table">
+            <thead>
+              <tr>
+                <th style="width: 15%;">เลขบัตรประชาชน</th>
+                <th style="width: 15%;">รหัสนักเรียน</th>
+                
+                <th style="width: 30%; text-align: left;"> ชื่อ-นามสกุล</th>
+                
+                <th style="width: 10%;">ชั้น/ห้อง</th>
+                <th style="width: 10%;">ปีที่จบ</th>
+                <th style="width: 20%; text-align: center;">ใบจบการศึกษา</th>
+              </tr>
+            </thead>
+            <tbody id="studentTableBody">
+              </tbody>
+          </table>
       </div>
     </section>
 
