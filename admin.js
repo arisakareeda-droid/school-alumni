@@ -55,8 +55,8 @@ async function fetchStudentsAdmin() {
       // เพิ่มบรรทัดที่แสดงผล student.idCard ในตาราง
       html += `
         <tr>
-          <td>${student.studentId || '-'}</td>
           <td>${student.idCard || '-'}</td>
+          <td>${student.studentId || '-'}</td>
           <td>${student.prefix || ''}${student.firstname || ''} ${student.lastname || ''}</td>
           <td>${student.classroom || '-'}</td>
           <td>${student.graduateYear || '-'}</td>
