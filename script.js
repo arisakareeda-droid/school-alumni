@@ -1,6 +1,23 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
+// -------------------- ตรวจสอบสิทธิ์ --------------------
+document.addEventListener("DOMContentLoaded", () => {
+
+    // เช็คสถานะล็อกอินแอดมิน
+    const isAdmin = sessionStorage.getItem('isAdminLoggedIn') === 'true';
+
+    // ชื่อหน้าปัจจุบัน
+    const currentPage = window.location.pathname;
+
+    // ป้องกันเฉพาะหน้า admin
+    if (currentPage.includes('admin.html') && !isAdmin) {
+        window.location.href = 'login.html';
+    }
+
+});
+
+// -------------------- Firebase Config --------------------
 const firebaseConfig = {
   apiKey: "AIzaSyDA6VlDShC5-3XMCSdpbVMnkKkLEhGf_xY",
   authDomain: "school-alumni-system-a7ccf.firebaseapp.com",
@@ -11,82 +28,174 @@ const firebaseConfig = {
   measurementId: "G-RT50BXY1TP"
 };
 
+// -------------------- Firebase --------------------
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+// -------------------- Elements --------------------
 const studentTableBody = document.getElementById('studentTableBody');
 const searchInput = document.getElementById('searchInput');
 const searchBtn = document.getElementById('searchBtn');
 
-let allStudents = []; 
+let allStudents = [];
 
+// -------------------- โหลดข้อมูล --------------------
 async function fetchStudents() {
+
   try {
+
     const querySnapshot = await getDocs(collection(db, "students"));
+
     allStudents = [];
+
     querySnapshot.forEach((doc) => {
-      allStudents.push({ id: doc.id, ...doc.data() });
+
+      allStudents.push({
+        id: doc.id,
+        ...doc.data()
+      });
+
     });
+
     renderTable(allStudents);
+
   } catch (error) {
+
     console.error("เกิดข้อผิดพลาด:", error);
-    if(studentTableBody) {
-      studentTableBody.innerHTML = `<tr><td colspan="5" style="color:red; text-align:center;">ไม่สามารถโหลดข้อมูลได้</td></tr>`;
+
+    if (studentTableBody) {
+
+      studentTableBody.innerHTML = `
+        <tr>
+          <td colspan="5" style="color:red; text-align:center;">
+            ไม่สามารถโหลดข้อมูลได้
+          </td>
+        </tr>
+      `;
     }
   }
 }
 
+// -------------------- แสดงตาราง --------------------
 function renderTable(data) {
+
   if (!studentTableBody) return;
-  
-  // Empty State: ปรับระยะห่าง (Padding) และบรรทัด (Line-height) ให้ดูโปร่งและสบายตา
+
+  // ถ้าไม่พบข้อมูล
   if (data.length === 0) {
+
     studentTableBody.innerHTML = `
       <tr>
         <td colspan="5" style="text-align:center; padding: 4rem 1rem;">
-          <div style="font-size: 3rem; margin-bottom: 15px;"></div>
           <div style="font-size: 1.1rem; color: #475569; line-height: 1.8;">
             <strong>ขออภัย ไม่พบรายชื่อที่ค้นหา</strong><br>
-            <span style="color: #64748b;">กรุณาตรวจสอบชื่อ หรือปีที่จบการศึกษาใหม่อีกครั้ง</span>
+            <span style="color: #64748b;">
+              กรุณาตรวจสอบชื่อ หรือปีที่จบการศึกษาใหม่อีกครั้ง
+            </span>
           </div>
         </td>
-      </tr>`;
+      </tr>
+    `;
+
     return;
   }
 
   let html = '';
+
   data.forEach((student) => {
+
     html += `
       <tr>
-        <td>${student.studentId || '-'}</td>
-        <td>${student.prefix || ''}${student.firstname || ''} ${student.lastname || ''}</td>
-        <td>${student.classroom || '-'}</td>
-        <td>${student.graduateYear || '-'}</td>
-        <td style="text-align:center;">
-          ${student.imageUrl ? `<a href="${student.imageUrl}" target="_blank" class="search-custom-btn" style="padding: 5px 15px; text-decoration:none; display:inline-block; font-size:13px;">ดูใบจบ</a>` : '-'}
+
+        <td>
+          ${student.studentId || '-'}
         </td>
+
+        <td>
+          ${student.prefix || ''}
+          ${student.firstname || ''}
+          ${student.lastname || ''}
+        </td>
+
+        <td>
+          ${student.classroom || '-'}
+        </td>
+
+        <td>
+          ${student.graduateYear || '-'}
+        </td>
+
+        <td style="text-align:center;">
+
+          ${
+            student.imageUrl
+
+            ? `
+              <a
+                href="${student.imageUrl}"
+                target="_blank"
+                class="search-custom-btn"
+                style="
+                  padding:5px 15px;
+                  text-decoration:none;
+                  display:inline-block;
+                  font-size:13px;
+                "
+              >
+                ดูใบจบ
+              </a>
+            `
+
+            : '-'
+          }
+
+        </td>
+
       </tr>
     `;
   });
+
   studentTableBody.innerHTML = html;
 }
 
+// -------------------- ค้นหา --------------------
 function handleSearch() {
+
   const searchText = searchInput.value.toLowerCase().trim();
+
   const filtered = allStudents.filter(student => {
-    const fullName = `${student.firstname || ''} ${student.lastname || ''}`.toLowerCase();
+
+    const fullName =
+      `${student.firstname || ''} ${student.lastname || ''}`
+      .toLowerCase();
+
     const id = (student.studentId || '').toString();
+
     const year = (student.graduateYear || '').toString();
-    return fullName.includes(searchText) || id.includes(searchText) || year.includes(searchText);
+
+    return (
+      fullName.includes(searchText) ||
+      id.includes(searchText) ||
+      year.includes(searchText)
+    );
   });
+
   renderTable(filtered);
 }
 
-if(searchBtn && searchInput) {
+// -------------------- Events --------------------
+if (searchBtn && searchInput) {
+
   searchBtn.addEventListener('click', handleSearch);
+
   searchInput.addEventListener('keyup', (e) => {
-    if (e.key === 'Enter') handleSearch();
+
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+
   });
 }
 
+// -------------------- เริ่มโหลดข้อมูล --------------------
 fetchStudents();
