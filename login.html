@@ -3,100 +3,483 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>เข้าสู่ระบบแอดมิน - โรงเรียนบ้านน้ำเค็ม</title>
+
   <link rel="stylesheet" href="style.css">
+
+  <!-- Google Font -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
   <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+
+  <!-- SweetAlert -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
   <style>
-    body { font-family: 'Sarabun', sans-serif; background-color: #f8fafc; }
-    .login-input { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 15px; box-sizing: border-box; transition: all 0.2s; }
-    .login-input:focus { outline: none; border-color: #166534; box-shadow: 0 0 0 3px rgba(22, 101, 52, 0.15); }
-    .btn-common { display: block; width: 100%; padding: 12px; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; text-align: center; text-decoration: none; cursor: pointer; box-sizing: border-box; transition: all 0.2s; }
-    .btn-submit { background-color: #166534; color: white; }
-    .btn-submit:hover { background-color: #14532d; }
-    .btn-cancel { background-color: #64748b; color: white; }
-    .btn-cancel:hover { background-color: #475569; }
+
+    *{
+      box-sizing:border-box;
+    }
+
+    body{
+      font-family:'Sarabun',sans-serif;
+      background:linear-gradient(135deg,#f0fdf4,#ecfeff);
+      margin:0;
+      color:#1e293b;
+    }
+
+    /* ================= HEADER ================= */
+
+    .school-header{
+      background:linear-gradient(135deg,#166534,#14532d);
+      padding:24px 20px;
+      color:white;
+      border-bottom:4px solid #facc15;
+      box-shadow:0 4px 14px rgba(0,0,0,0.08);
+    }
+
+    .header-container{
+      max-width:1200px;
+      margin:auto;
+      display:flex;
+      align-items:center;
+      gap:20px;
+    }
+
+    .school-logo{
+      width:120px;
+      height:120px;
+      object-fit:contain;
+      background:white;
+      padding:8px;
+      border-radius:50%;
+      box-shadow:0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .title-area h1{
+      margin:6px 0 0;
+      font-size:30px;
+      font-weight:700;
+    }
+
+    .title-area h2{
+      margin:0 0 10px;
+      font-size:18px;
+      font-weight:600;
+      color:#fde68a;
+      letter-spacing:0.3px;
+    }
+
+    .title-area p{
+      margin:4px 0 0;
+      font-size:13px;
+      opacity:0.95;
+    }
+
+    /* ================= MAIN ================= */
+
+    .main-container{
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      padding:50px 20px;
+    }
+
+    /* ================= LOGIN CARD ================= */
+
+    .card-section{
+      width:100%;
+      max-width:620px; /* ปรับให้กล่องใหญ่ขึ้น */
+      background:white;
+      border-radius:24px;
+      overflow:hidden;
+      box-shadow:0 10px 35px rgba(15,23,42,0.10);
+      border:1px solid #dbeafe;
+    }
+
+    .card-header{
+      background:#fef9c3;
+      border-bottom:2px solid #fef08a;
+      padding:22px;
+    }
+
+    .card-header h3{
+      margin:0;
+      color:#854d0e;
+      text-align:center;
+      font-size:24px;
+      font-weight:700;
+    }
+
+    .card-body{
+      padding:35px;
+    }
+
+    /* ================= INPUT ================= */
+
+    .form-group{
+      margin-bottom:20px;
+    }
+
+    .form-group label{
+      display:block;
+      margin-bottom:8px;
+      font-size:15px;
+      font-weight:600;
+      color:#334155;
+    }
+
+    .login-input{
+      width:100%;
+      padding:15px 16px;
+      border:1px solid #cbd5e1;
+      border-radius:12px;
+      font-size:15px;
+      background:#f8fafc;
+      transition:0.2s;
+    }
+
+    .login-input:focus{
+      outline:none;
+      border-color:#166534;
+      background:white;
+      box-shadow:0 0 0 4px rgba(22,101,52,0.10);
+    }
+
+    .login-input::placeholder{
+      color:#94a3b8;
+    }
+
+    /* ================= PASSWORD ================= */
+
+    .password-wrapper{
+      position:relative;
+    }
+
+    #password{
+      padding-right:50px;
+    }
+
+    .toggle-password{
+      position:absolute;
+      right:16px;
+      top:50%;
+      transform:translateY(-50%);
+      cursor:pointer;
+      color:#cbd5e1;
+      font-size:18px;
+      transition:0.2s;
+    }
+
+    .toggle-password:hover{
+      color:#94a3b8;
+    }
+
+    /* ซ่อนตาซ้ำจาก browser */
+
+    input[type="password"]::-ms-reveal,
+    input[type="password"]::-ms-clear{
+      display:none;
+    }
+
+    input[type="password"]::-webkit-credentials-auto-fill-button,
+    input[type="password"]::-webkit-textfield-decoration-container{
+      display:none !important;
+    }
+
+    /* ================= ERROR ================= */
+
+    #errorMessage{
+      color:#ef4444;
+      font-size:14px;
+      text-align:center;
+      margin-bottom:18px;
+      display:none;
+      background:#fef2f2;
+      padding:12px;
+      border-radius:10px;
+      border:1px solid #fecaca;
+    }
+
+    /* ================= BUTTON ================= */
+
+    .button-group{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+
+    .btn-common{
+      display:block;
+      width:100%;
+      padding:15px;
+      border:none;
+      border-radius:12px;
+      font-size:16px;
+      font-weight:700;
+      text-align:center;
+      text-decoration:none;
+      cursor:pointer;
+      transition:0.2s;
+    }
+
+    .btn-submit{
+      background:linear-gradient(135deg,#166534,#16a34a);
+      color:white;
+      box-shadow:0 6px 14px rgba(22,101,52,0.18);
+    }
+
+    .btn-submit:hover{
+      transform:translateY(-2px);
+      box-shadow:0 8px 18px rgba(22,101,52,0.22);
+    }
+
+    .btn-cancel{
+      background:#64748b;
+      color:white;
+    }
+
+    .btn-cancel:hover{
+      background:#475569;
+    }
+
+    /* ================= MOBILE ================= */
+
+    @media(max-width:768px){
+
+      .header-container{
+        flex-direction:column;
+        text-align:center;
+      }
+
+      .school-logo{
+        width:82px;
+        height:82px;
+      }
+
+      .title-area h1{
+        font-size:24px;
+      }
+
+      .title-area h2{
+        font-size:16px;
+      }
+
+      .card-section{
+        max-width:100%;
+      }
+
+      .card-header h3{
+        font-size:20px;
+      }
+
+      .card-body{
+        padding:24px;
+      }
+
+    }
+
   </style>
 </head>
+
 <body>
 
+  <!-- HEADER -->
   <header class="school-header">
+
     <div class="header-container">
-      <img src="logo.png" alt="โลโก้โรงเรียนบ้านน้ำเค็ม" class="school-logo" onerror="this.src='https://placehold.co/100x100/15803d/ffffff?text=Logo'">
+
+      <img src="logo.png"
+           alt="โลโก้โรงเรียนบ้านน้ำเค็ม"
+           class="school-logo"
+           onerror="this.src='https://placehold.co/100x100/15803d/ffffff?text=Logo'">
+
       <div class="title-area">
-        <h2 style="margin-bottom: 8px;">ระบบจัดการข้อมูลศิษย์เก่าออนไลน์</h2>
+<div class="title-area">
+        <h2 style="margin-top: 12px; margin-bottom: 20px;">
+  ระบบบริการค้นหาข้อมูลศิษย์เก่าออนไลน์
+</h2>
         <h1 style="margin-bottom: 8px; margin-top: 4px;">โรงเรียนบ้านน้ำเค็ม</h1>
         <p style="margin-bottom: 4px;">ตำบลบ้านนา อำเภอจะนะ จังหวัดสงขลา</p>
+        <p style="margin-bottom: 4px;">สำนักงานเขตพื้นที่การศึกษาประถมศึกษาสงขลา เขต 3</p>
       </div>
     </div>
+
   </header>
 
-  <main class="main-container" style="display: block; max-width: 450px; margin: 3rem auto; width: 92%;">
+  <!-- MAIN -->
+  <main class="main-container">
+
     <section class="card-section">
-      <div class="card-header" style="background-color: #fef9c3; border-bottom: 2px solid #fef08a; padding: 15px;">
-        <h3 style="color: #854d0e; text-align: center; margin: 0;">เข้าสู่ระบบผู้ดูแลระบบ (Admin)</h3>
+
+      <div class="card-header">
+
+        <h3>
+          เข้าสู่ระบบผู้ดูแลระบบ (Admin)
+        </h3>
+
       </div>
-      <div class="card-body" style="padding: 20px;">
+
+      <div class="card-body">
+
         <form id="loginForm">
-          <div class="form-group" style="margin-bottom: 15px;">
-            <label style="display:block; margin-bottom: 5px;">ชื่อผู้ใช้งาน (Username)</label>
-            <input type="text" id="username" class="login-input" required placeholder="กรอกชื่อผู้ใช้งาน" autocomplete="off">
+
+          <!-- USERNAME -->
+          <div class="form-group">
+
+            <label>
+              ชื่อผู้ใช้งาน (Username)
+            </label>
+
+            <input type="text"
+                   id="username"
+                   class="login-input"
+                   required
+                   placeholder="กรอกชื่อผู้ใช้งาน"
+                   autocomplete="off">
+
           </div>
 
-          <div class="form-group" style="margin-bottom: 20px;">
-            <label style="display:block; margin-bottom: 5px;">รหัสผ่าน (Password)</label>
-            <div style="position: relative;">
-              <input type="password" id="password" class="login-input" required placeholder="กรอกรหัสผ่าน">
-              <span id="togglePassword" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #64748b; font-size: 14px; font-weight: 600; user-select: none;">แสดง</span>
+          <!-- PASSWORD -->
+          <div class="form-group">
+
+            <label>
+              รหัสผ่าน (Password)
+            </label>
+
+            <div class="password-wrapper">
+
+              <input type="password"
+                     id="password"
+                     class="login-input"
+                     required
+                     placeholder="กรอกรหัสผ่าน">
+
+              <!-- ครึ่งตา -->
+              <i class="fa-regular fa-eye-slash toggle-password"
+                 id="togglePassword"></i>
+
             </div>
+
           </div>
 
-          <p id="errorMessage" style="color: #ef4444; font-size: 14px; text-align: center; margin-bottom: 15px; display: none;">ชื่อผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง!</p>
-
-          <div class="button-group" style="display: flex; flex-direction: column; gap: 10px;">
-            <button type="submit" class="btn-common btn-submit">เข้าสู่ระบบ</button>
-            <a href="index.html" class="btn-common btn-cancel">ยกเลิกกลับหน้าหลัก</a>
+          <!-- ERROR -->
+          <div id="errorMessage">
+            ชื่อผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง
           </div>
+
+          <!-- BUTTON -->
+          <div class="button-group">
+
+            <button type="submit"
+                    class="btn-common btn-submit">
+
+              เข้าสู่ระบบ
+
+            </button>
+
+            <a href="index.html"
+               class="btn-common btn-cancel">
+
+              ยกเลิกกลับหน้าหลัก
+
+            </a>
+
+          </div>
+
         </form>
+
       </div>
+
     </section>
+
   </main>
 
   <script>
-    // ฟังก์ชันเปิด/ปิดรหัสผ่าน
-    const passwordInput = document.getElementById('password');
-    const togglePassword = document.getElementById('togglePassword');
-    togglePassword.addEventListener('click', function() {
-      const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-      passwordInput.setAttribute('type', type);
-      this.textContent = type === 'password' ? 'แสดง' : 'ซ่อน';
-    });
 
-    // ฟังก์ชันตรวจสอบการล็อกอิน
-    document.getElementById('loginForm').addEventListener('submit', function(e) {
-      e.preventDefault(); 
-      const user = document.getElementById('username').value;
-      const pass = document.getElementById('password').value;
-      const errorMsg = document.getElementById('errorMessage');
+    // ================= เปิด/ปิดรหัสผ่าน =================
 
-      if (user === 'admin' && pass === 'namkem90130') {
-        sessionStorage.setItem('isAdminLoggedIn', 'true');
-        Swal.fire({
-          icon: 'success',
-          title: 'สำเร็จ!',
-          text: 'เข้าสู่ระบบสำเร็จ',
-          confirmButtonColor: '#166534',
-          timer: 2000
-        }).then(() => {
-          window.location.href = 'admin.html';
-        });
-      } else {
-        errorMsg.style.display = 'block';
-        document.getElementById('password').value = ''; 
+    const passwordInput =
+      document.getElementById('password');
+
+    const togglePassword =
+      document.getElementById('togglePassword');
+
+    togglePassword.addEventListener('click', function(){
+
+      if(passwordInput.type === 'password'){
+
+        passwordInput.type = 'text';
+
+        this.classList.remove('fa-eye-slash');
+        this.classList.add('fa-eye');
+
+      }else{
+
+        passwordInput.type = 'password';
+
+        this.classList.remove('fa-eye');
+        this.classList.add('fa-eye-slash');
+
       }
+
     });
+
+    // ================= LOGIN =================
+
+    document.getElementById('loginForm')
+    .addEventListener('submit', function(e){
+
+      e.preventDefault();
+
+      const user =
+        document.getElementById('username').value;
+
+      const pass =
+        document.getElementById('password').value;
+
+      const errorMsg =
+        document.getElementById('errorMessage');
+
+      if(user === 'admin' &&
+         pass === 'namkem90130'){
+
+        sessionStorage.setItem(
+          'isAdminLoggedIn',
+          'true'
+        );
+
+        Swal.fire({
+          icon:'success',
+          title:'สำเร็จ!',
+          text:'เข้าสู่ระบบสำเร็จ',
+          confirmButtonColor:'#166534',
+          timer:2000,
+          showConfirmButton:false
+        }).then(()=>{
+
+          window.location.href =
+            'search.html';
+
+        });
+
+      }else{
+
+        errorMsg.style.display = 'block';
+
+        document.getElementById('password').value='';
+
+      }
+
+    });
+
   </script>
+
 </body>
 </html>
