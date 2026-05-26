@@ -1,6 +1,11 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
+// 1. ตรวจสอบสิทธิ์ (ถ้ายังไม่ล็อกอิน ให้ดีดออกไปหน้า login.html)
+if (sessionStorage.getItem('isAdminLoggedIn') !== 'true') {
+  window.location.href = 'login.html';
+}
+
 const firebaseConfig = {
   apiKey: "AIzaSyDA6VlDShC5-3XMCSdpbVMnkKkLEhGf_xY",
   authDomain: "school-alumni-system-a7ccf.firebaseapp.com",
@@ -33,25 +38,25 @@ async function uploadImage(file) {
     throw new Error(result.error.message || "อัปโหลดรูปภาพไม่สำเร็จ");
   } catch (err) { throw err; }
 }
-
 async function fetchStudentsAdmin() {
   if (!adminStudentTableBody) return;
   try {
     const querySnapshot = await getDocs(collection(db, "students"));
     let html = '';
     
-    // Empty State: กรณีไม่มีข้อมูล
     if (querySnapshot.empty) {
-      adminStudentTableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 20px;">ยังไม่มีข้อมูลนักเรียนในระบบ</td></tr>`;
+      adminStudentTableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 20px;">ยังไม่มีข้อมูลนักเรียนในระบบ</td></tr>`;
       return;
     }
 
     querySnapshot.forEach((docSnap) => {
       const student = docSnap.data();
       const docId = docSnap.id;
+      // เพิ่มบรรทัดที่แสดงผล student.idCard ในตาราง
       html += `
         <tr>
           <td>${student.studentId || '-'}</td>
+          <td>${student.idCard || '-'}</td>
           <td>${student.prefix || ''}${student.firstname || ''} ${student.lastname || ''}</td>
           <td>${student.classroom || '-'}</td>
           <td>${student.graduateYear || '-'}</td>
@@ -68,7 +73,7 @@ async function fetchStudentsAdmin() {
     adminStudentTableBody.innerHTML = html;
     addTableEventHandlers();
   } catch (error) {
-    adminStudentTableBody.innerHTML = `<tr><td colspan="5" style="color:red; text-align:center;">ไม่สามารถดึงข้อมูลได้</td></tr>`;
+    adminStudentTableBody.innerHTML = `<tr><td colspan="6" style="color:red; text-align:center;">ไม่สามารถดึงข้อมูลได้</td></tr>`;
   }
 }
 
@@ -80,6 +85,7 @@ function addTableEventHandlers() {
       if (docSnap.exists()) {
         const s = docSnap.data();
         document.getElementById("studentId").value = s.studentId;
+        document.getElementById("idCard").value = s.idCard || ""; // ดึงเลขบัตรมาด้วย
         document.getElementById("prefix").value = s.prefix;
         document.getElementById("firstname").value = s.firstname;
         document.getElementById("lastname").value = s.lastname;
@@ -121,7 +127,6 @@ if (studentForm) {
     const docId = currentDocIdInput.value;
     const file = document.getElementById("diplomaFile").files[0];
 
-    // Loading State: เริ่มทำงาน
     Swal.fire({ title: 'กำลังบันทึกข้อมูล...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
 
     try {
@@ -129,6 +134,7 @@ if (studentForm) {
       if (file) imageUrl = await uploadImage(file);
       const studentData = {
         studentId: document.getElementById("studentId").value,
+        idCard: document.getElementById("idCard").value, // บันทึกเลขบัตร
         prefix: document.getElementById("prefix").value,
         firstname: document.getElementById("firstname").value,
         lastname: document.getElementById("lastname").value,
@@ -141,7 +147,7 @@ if (studentForm) {
       if (docId) {
         await updateDoc(doc(db, "students", docId), studentData);
       } else {
-        if (!file) throw new Error("กรุณาเลือกไฟล์รูปภาพ");
+        if (!file) throw new Error("กรุณาเลือกไฟล์รูปภาพใบจบการศึกษา");
         studentData.imageUrl = imageUrl;
         studentData.createdAt = new Date();
         await addDoc(collection(db, "students"), studentData);
