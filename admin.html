@@ -9,43 +9,43 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-</head>
-<body>
 
   <script>
-    // เช็กว่าถ้ายังไม่ได้ล็อกอิน ให้แจ้งเตือนด้วย SweetAlert2 แล้วเด้งกลับหน้า Login
     if (sessionStorage.getItem('isAdminLoggedIn') !== 'true') {
+      document.documentElement.style.display = 'none'; 
       Swal.fire({
         icon: 'warning',
         title: 'ยังไม่ได้เข้าสู่ระบบ',
         text: 'กรุณาเข้าสู่ระบบก่อนใช้งาน',
-        confirmButtonColor: '#166534'
+        confirmButtonColor: '#166534',
+        allowOutsideClick: false
       }).then(() => {
         window.location.href = 'login.html';
       });
     }
   </script>
+</head>
 
+<body>
   <header class="school-header">
     <div class="header-container">
       <img src="logo.png" alt="โลโก้โรงเรียนบ้านน้ำเค็ม" class="school-logo" onerror="this.src='https://placehold.co/100x100/15803d/ffffff?text=Logo'">
       <div class="title-area">
-        <h2 style="margin-bottom: 8px;">ระบบจัดการข้อมูลศิษย์เก่าออนไลน์ (Admin)</h2>
+        <h2 style="margin-bottom: 8px;">ระบบบริการค้นหาข้อมูลศิษย์เก่าออนไลน์</h2>
         <h1 style="margin-bottom: 8px; margin-top: 4px;">โรงเรียนบ้านน้ำเค็ม</h1>
         <p style="margin-bottom: 4px;">ตำบลบ้านนา อำเภอจะนะ จังหวัดสงขลา</p>
         <small>สำนักงานเขตพื้นที่การศึกษาประถมศึกษาสงขลา เขต 3</small>
       </div>
     </div>
-    <div class="nav-bar" style="padding: 10px 0;">
-      <div class="header-container" style="display: flex; justify-content: space-between; align-items: center;">
-        <span style="color: #fef08a; font-size: 16px; font-weight: 600;">ส่วนงานจัดการและบันทึกข้อมูลหลังบ้าน</span>
-        <a href="index.html" class="back-link" style="color: white; text-decoration: none; font-size: 16px; font-weight: 600; background: rgba(255,255,255,0.25); padding: 6px 18px; border-radius: 20px; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">กลับหน้าหลัก</a>
+    <div class="nav-bar" style="padding: 20px 0 0px;">
+      <div class="header-container" style="display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
+        <a href="search.html" class="admin-link" style="color: white; text-decoration: none; font-size: 16px; font-weight: 600; background: rgba(255,255,255,0.25); padding: 6px 18px; border-radius: 20px; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">กลับไปหน้าค้นหา</a>
+        <a href="index.html" class="admin-link" style="color: white; text-decoration: none; font-size: 16px; font-weight: 600; background: rgb(240, 8, 8); padding: 6px 18px; border-radius: 20px; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">ออกจากระบบ</a>
       </div>
     </div>
   </header>
 
   <main class="main-container">
-    
     <section class="card-section">
       <div class="card-header" style="background-color: #fef9c3; border-bottom: 2px solid #fef08a; padding: 15px;">
         <h3 id="formTitle" style="color: #854d0e; margin: 0;">เพิ่มข้อมูลนักเรียนใหม่</h3>
@@ -53,6 +53,11 @@
       <div class="card-body">
         <form id="studentForm">
           <input type="hidden" id="currentDocId"> 
+          
+          <div class="form-group">
+            <label>เลขบัตรประชาชน (13 หลัก)</label>
+            <input type="text" id="idCard" class="login-input" required placeholder="กรอกเลขบัตรประชาชน 13 หลัก" maxlength="13">
+          </div>
           
           <div class="form-group">
             <label>รหัสนักเรียน</label>
@@ -109,27 +114,23 @@
         <h3>รายชื่อนักเรียนทั้งหมดในระบบ</h3>
       </div>
       <div class="card-body table-responsive">
-        <table class="custom-table">
-          <thead>
-            <tr>
-              <th>รหัส</th>
-              <th>ชื่อ-นามสกุล</th>
-              <th>ชั้น/ห้อง</th>
-              <th>ปีที่จบ</th>
-              <th>จัดการ</th>
-            </tr>
-          </thead>
-          <tbody id="adminStudentTableBody">
-            <tr>
-              <td colspan="5" style="text-align: center; color: #64748b; padding: 2rem;">กำลังโหลดข้อมูลหลังบ้าน...</td>
-            </tr>
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>รหัส</th>
+                  <th>เลขบัตรประชาชน</th>
+                  <th>ชื่อ-นามสกุล</th> <th>ชั้น/ห้อง</th>
+                  <th>ปีที่จบ</th>
+                  <th style="text-align: center;">จัดการ</th>
+                </tr>
+              </thead>
+            <tbody id="adminStudentTableBody">
+            <tr><td colspan="6" style="text-align: center; color: #64748b; padding: 2rem;">กำลังโหลดข้อมูลหลังบ้าน...</td></tr>
           </tbody>
         </table>
       </div>
     </section>
-
   </main>
-
   <script type="module" src="admin.js"></script>
 </body>
 </html>
