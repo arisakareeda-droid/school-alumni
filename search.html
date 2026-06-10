@@ -64,6 +64,40 @@
         text-align: left !important;
         padding-left: 0px !important;
     }
+
+    .folder-container { display: flex; flex-direction: column; gap: 20px; }
+
+.year-folder {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    overflow: hidden;
+    border-left: 8px solid #166534; /* สันแฟ้ม */
+}
+
+.folder-title {
+    background: #f1f5f9;
+    padding: 15px 20px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #166534;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.student-item {
+    padding: 15px 20px;
+    border-bottom: 1px solid #f8fafc;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.student-item:last-child { border-bottom: none; }
+
   </style>
 </head>
 <body>
@@ -110,27 +144,11 @@
     </section>
 
     <section class="card-section">
-      <div class="card-header list-header">
-        <h3 id="resultTitle">ข้อมูลนักเรียน</h3>
-      </div>
-      <div class="card-body table-responsive">
-         <table class="custom-table">
-            <thead>
-              <tr>
-                <th style="width: 15%;">เลขบัตรประชาชน</th>
-                <th style="width: 15%;">รหัสนักเรียน</th>
-                
-                <th style="width: 30%; text-align: left;"> ชื่อ-นามสกุล</th>
-                
-                <th style="width: 10%;">ชั้น/ห้อง</th>
-                <th style="width: 10%;">ปีที่จบ</th>
-                <th style="width: 20%; text-align: center;">ใบจบการศึกษา</th>
-              </tr>
-            </thead>
-            <tbody id="studentTableBody">
-              </tbody>
-          </table>
-      </div>
+  <div class="card-header list-header">
+    <h3 id="resultTitle">ข้อมูลนักเรียน</h3>
+  </div>
+  <div id="studentTableBody" class="card-body table-responsive folder-container">
+  </div>
     </section>
 
   </main>
