@@ -51,30 +51,59 @@ async function fetchStudents() {
   }
 }
 
-// แก้ไขฟังก์ชัน renderTable ใน script.js
+// --- นำโค้ดนี้ไปแทนที่ฟังก์ชัน renderTable เดิมใน script.js ---
+
 function renderTable(data) {
   if (!studentTableBody) return;
+  
   if (data.length === 0) {
-    // แก้ colspan เป็น 6
-    studentTableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 4rem 1rem;"><strong>ขออภัย ไม่พบรายชื่อที่ค้นหา</strong></td></tr>`;
+    studentTableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 4rem 1rem;"><strong>ไม่พบรายชื่อที่ค้นหา</strong></td></tr>`;
     return;
   }
 
+  // 1. จัดกลุ่มข้อมูลตามปีการศึกษา
+  const grouped = data.reduce((acc, student) => {
+    const year = student.graduateYear || "ไม่ระบุปี";
+    if (!acc[year]) acc[year] = [];
+    acc[year].push(student);
+    return acc;
+  }, {});
+
+  // 2. เรียงลำดับปีจากมากไปน้อย (ปีล่าสุดขึ้นก่อน)
+  const sortedYears = Object.keys(grouped).sort((a, b) => b - a);
+
+  // 3. สร้าง HTML โดยวนลูปตามกลุ่มปีการศึกษา
   let html = '';
-  data.forEach((student) => {
+  
+  sortedYears.forEach(year => {
+    // แถวหัวข้อแยกหมวดหมู่
     html += `
-      <tr>
-        <td>${student.idCard || '-'}</td> <td>${student.studentId || '-'}</td> <td style="text-align: left; padding-left: 20px;">
-          ${student.prefix || ''} ${student.firstname || ''} ${student.lastname || ''}
-        </td>
-        <td>${student.classroom || '-'}</td>
-        <td>${student.graduateYear || '-'}</td>
-        <td style="text-align:center;">
-          ${student.imageUrl ? `<a href="${student.imageUrl}" target="_blank" class="search-custom-btn" style="padding:5px 15px; text-decoration:none; display:inline-block; font-size:13px;">ดูใบจบ</a>` : '-'}
+      <tr style="background-color: #f1f5f9;">
+        <td colspan="6" style="padding: 12px; font-weight: 700; color: #166534; border-bottom: 2px solid #cbd5e1;">
+          ปีการศึกษาที่จบ: ${year}
         </td>
       </tr>
     `;
+
+    // รายชื่อนักเรียนในแต่ละปี
+    grouped[year].forEach(student => {
+      html += `
+        <tr>
+          <td>${student.idCard || '-'}</td>
+          <td>${student.studentId || '-'}</td>
+          <td style="text-align: left; padding-left: 20px;">
+            ${student.prefix || ''} ${student.firstname || ''} ${student.lastname || ''}
+          </td>
+          <td>${student.classroom || '-'}</td>
+          <td>${student.graduateYear || '-'}</td>
+          <td style="text-align:center;">
+            ${student.imageUrl ? `<a href="${student.imageUrl}" target="_blank" class="search-custom-btn" style="padding:5px 15px; text-decoration:none; display:inline-block; font-size:13px;">ดูใบจบ</a>` : '-'}
+          </td>
+        </tr>
+      `;
+    });
   });
+
   studentTableBody.innerHTML = html;
 }
 
