@@ -59,7 +59,7 @@ function renderTable(data) {
     sortedYears.forEach(year => {
         html += `
             <div class="year-folder">
-                <div class="folder-title">📁 ปีการศึกษาที่จบ: ${year}</div>
+                <div class="folder-title">ปีการศึกษาที่จบ ${year}</div>
                 ${grouped[year].map(student => `
                     <div class="student-item">
                         <div style="line-height: 1.5;">
