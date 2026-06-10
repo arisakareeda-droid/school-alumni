@@ -339,15 +339,13 @@
             const student = snap.docs.map(doc => doc.data()).find(s => s.idCard === inputId);
 
             if (student) {
+                // แสดงเฉพาะข้อมูลที่เป็นข้อความเท่านั้น
                 result.innerHTML = `
                 <div class="result-card">
                     <h3>${student.prefix || ''} ${student.firstname || ''} ${student.lastname || ''}</h3>
                     <p><strong>รหัสนักเรียน :</strong> ${student.studentId || '-'}</p>
                     <p><strong>ชั้น :</strong> ${student.classroom || '-'}</p>
                     <p><strong>ปีที่จบ :</strong> ${student.graduateYear || '-'}</p>
-                    ${student.imageUrl ? `
-                    <img src="${student.imageUrl}" alt="ใบจบการศึกษา">
-                    <a href="${student.imageUrl}" target="_blank" class="result-link-btn">ดาวน์โหลดใบจบการศึกษา</a>` : ''}
                 </div>`;
             } else {
                 result.innerHTML = `
