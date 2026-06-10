@@ -1,16 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-// -------------------- ตรวจสอบสิทธิ์ --------------------
-document.addEventListener("DOMContentLoaded", () => {
-    const isAdmin = sessionStorage.getItem('isAdminLoggedIn') === 'true';
-    const currentPage = window.location.pathname;
-
-    if (currentPage.includes('admin.html') && !isAdmin) {
-        window.location.href = 'login.html';
-    }
-});
-
 // -------------------- Firebase Config --------------------
 const firebaseConfig = {
   apiKey: "AIzaSyDA6VlDShC5-3XMCSdpbVMnkKkLEhGf_xY",
@@ -22,7 +12,6 @@ const firebaseConfig = {
   measurementId: "G-RT50BXY1TP"
 };
 
-// -------------------- Firebase --------------------
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
@@ -31,8 +20,59 @@ const studentTableBody = document.getElementById('studentTableBody');
 const searchInput = document.getElementById('searchInput');
 const searchBtn = document.getElementById('searchBtn');
 const resultTitle = document.getElementById('resultTitle');
-const resultSection = document.getElementById('resultSection');
 let allStudents = [];
+
+// -------------------- ฉีด CSS เข้าไปให้หน้าเว็บโดยไม่ต้องแก้ HTML --------------------
+const style = document.createElement('style');
+style.innerHTML = `
+  .folder-container { display: flex; flex-direction: column; gap: 20px; margin-top: 10px; }
+  .year-folder { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); overflow: hidden; border-left: 8px solid #166534; }
+  .folder-title { background: #f1f5f9; padding: 15px 20px; font-size: 1.1rem; font-weight: 700; color: #166534; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; gap: 10px; }
+  .student-item { padding: 15px 20px; border-bottom: 1px solid #f8fafc; display: flex; justify-content: space-between; align-items: center; }
+  .student-item:last-child { border-bottom: none; }
+`;
+document.head.appendChild(style);
+
+// -------------------- Render ฟังก์ชันใหม่ --------------------
+function renderTable(data) {
+    const container = document.getElementById('studentTableBody');
+    if (!container) return;
+    
+    if (data.length === 0) {
+        container.innerHTML = `<p style="text-align:center; padding:20px;">ไม่พบข้อมูลศิษย์เก่า</p>`;
+        return;
+    }
+
+    // จัดกลุ่มตามปี
+    const grouped = data.reduce((acc, student) => {
+        const year = student.graduateYear || "ไม่ระบุปี";
+        if (!acc[year]) acc[year] = [];
+        acc[year].push(student);
+        return acc;
+    }, {});
+
+    const sortedYears = Object.keys(grouped).sort((a, b) => b - a);
+
+    let html = '<div class="folder-container">';
+    sortedYears.forEach(year => {
+        html += `
+            <div class="year-folder">
+                <div class="folder-title">📁 ปีการศึกษาที่จบ: ${year}</div>
+                ${grouped[year].map(student => `
+                    <div class="student-item">
+                        <div>
+                            <strong>${student.prefix || ''}${student.firstname || ''} ${student.lastname || ''}</strong><br>
+                            <small style="color:#64748b;">รหัส: ${student.studentId || '-'} | ชั้น: ${student.classroom || '-'} | เลขบัตร: ${student.idCard || '-'}</small>
+                        </div>
+                        ${student.imageUrl ? `<a href="${student.imageUrl}" target="_blank" class="search-custom-btn" style="padding:6px 12px; font-size:12px; text-decoration:none;">ดูใบจบ</a>` : ''}
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    });
+    html += '</div>';
+    container.innerHTML = html;
+}
 
 // -------------------- โหลดข้อมูล --------------------
 async function fetchStudents() {
@@ -45,106 +85,28 @@ async function fetchStudents() {
     renderTable(allStudents);
   } catch (error) {
     console.error("เกิดข้อผิดพลาด:", error);
-    if (studentTableBody) {
-      studentTableBody.innerHTML = `<tr><td colspan="5" style="color:red; text-align:center;">ไม่สามารถโหลดข้อมูลได้</td></tr>`;
-    }
+    if (studentTableBody) studentTableBody.innerHTML = `<p style="color:red; text-align:center;">ไม่สามารถโหลดข้อมูลได้</p>`;
   }
 }
 
-// --- นำโค้ดนี้ไปแทนที่ฟังก์ชัน renderTable เดิมใน script.js ---
-
-// --- นำโค้ดนี้ไปวางใน script.js แทนที่ฟังก์ชัน renderTable เดิม ---
-function renderTable(data) {
-    if (!studentTableBody) return;
-    
-    if (data.length === 0) {
-        studentTableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 4rem 1rem;"><strong>ไม่พบข้อมูลศิษย์เก่า</strong></td></tr>`;
-        return;
-    }
-
-    // 1. จัดกลุ่มข้อมูลตามปีการศึกษา
-    const grouped = data.reduce((acc, student) => {
-        const year = student.graduateYear || "ไม่ระบุปี";
-        if (!acc[year]) acc[year] = [];
-        acc[year].push(student);
-        return acc;
-    }, {});
-
-    // 2. เรียงลำดับปีจากมากไปน้อย
-    const sortedYears = Object.keys(grouped).sort((a, b) => b - a);
-
-    // 3. สร้าง HTML
-    let html = '';
-    sortedYears.forEach(year => {
-        // ส่วนหัวข้อปี (แฟ้ม)
-        html += `
-            <tr>
-                <td colspan="6" class="year-folder-header">
-                    📁 ปีการศึกษาที่จบ: ${year}
-                </td>
-            </tr>
-        `;
-
-        // รายชื่อในแต่ละปี
-        grouped[year].forEach(student => {
-            html += `
-                <tr>
-                    <td>${student.idCard || '-'}</td>
-                    <td>${student.studentId || '-'}</td>
-                    <td style="text-align: left; padding-left: 20px;">${student.prefix || ''}${student.firstname || ''} ${student.lastname || ''}</td>
-                    <td>${student.classroom || '-'}</td>
-                    <td>${student.graduateYear || '-'}</td>
-                    <td style="text-align:center;">
-                        ${student.imageUrl ? `<a href="${student.imageUrl}" target="_blank" class="search-custom-btn" style="padding:5px 15px; text-decoration:none; display:inline-block; font-size:13px;">ดูใบจบ</a>` : '-'}
-                    </td>
-                </tr>
-            `;
-        });
-    });
-
-    studentTableBody.innerHTML = html;
-}
-
-// -------------------- ค้นหา (แบบช่องเดียวครอบคลุมทุกข้อมูล) --------------------
+// -------------------- ค้นหา --------------------
 function handleSearch() {
-  // รับค่าจากช่อง searchInput ช่องเดิมที่คุณมีอยู่แล้ว
   const searchText = searchInput.value.toLowerCase().trim();
-
   const filtered = allStudents.filter(student => {
-    // 1. เตรียมข้อมูลสำหรับค้นหา (แปลงเป็นตัวพิมพ์เล็กและข้อความทั้งหมด)
     const fullName = `${student.firstname || ''} ${student.lastname || ''}`.toLowerCase();
     const id = (student.studentId || '').toString();
     const year = (student.graduateYear || '').toString();
-    const idCard = (student.idCard || '').toString(); // ดึงเลขบัตรประชาชนมาเทียบด้วย
-
-    // 2. ถ้าช่องว่าง ให้แสดงทั้งหมด (หรือไม่แสดงก็ได้ตามต้องการ)
+    const idCard = (student.idCard || '').toString();
     if (searchText === "") return true;
-
-    // 3. ตรวจสอบว่าสิ่งที่พิมพ์ ตรงกับข้อมูลส่วนไหนบ้าง
-    return (
-      fullName.includes(searchText) || // ค้นหาด้วยชื่อหรือนามสกุล
-      id.includes(searchText) ||       // ค้นหาด้วยรหัสนักเรียน
-      year.includes(searchText) ||     // ค้นหาด้วยปีที่จบ
-      idCard.includes(searchText)      // ค้นหาด้วยเลขบัตรประชาชน
-    );
+    return fullName.includes(searchText) || id.includes(searchText) || year.includes(searchText) || idCard.includes(searchText);
   });
-
   resultTitle.textContent = 'ผลการค้นหาข้อมูลนักเรียน';
   renderTable(filtered);
 }
 
-// -------------------- Events --------------------
 if (searchBtn && searchInput) {
-
   searchBtn.addEventListener('click', handleSearch);
-
-  searchInput.addEventListener('keyup', (e) => {
-    if (e.key === 'Enter') {
-      handleSearch();
-    }
-  });
-
+  searchInput.addEventListener('keyup', (e) => { if (e.key === 'Enter') handleSearch(); });
 }
 
-// -------------------- เริ่มโหลดข้อมูล --------------------
 fetchStudents();
