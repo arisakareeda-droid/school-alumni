@@ -39,11 +39,11 @@ function renderTable(data) {
     if (!container) return;
     
     if (data.length === 0) {
-        container.innerHTML = `<p style="text-align:center; padding:20px;">ไม่พบข้อมูลศิษย์เก่า</p>`;
+        container.innerHTML = `<p style="text-align:center; padding:40px; color:#64748b;">ไม่พบรายชื่อที่ค้นหา</p>`;
         return;
     }
 
-    // จัดกลุ่มตามปี
+    // จัดกลุ่มข้อมูลตามปีการศึกษา
     const grouped = data.reduce((acc, student) => {
         const year = student.graduateYear || "ไม่ระบุปี";
         if (!acc[year]) acc[year] = [];
@@ -51,26 +51,27 @@ function renderTable(data) {
         return acc;
     }, {});
 
+    // เรียงลำดับปีจากมากไปน้อย
     const sortedYears = Object.keys(grouped).sort((a, b) => b - a);
 
-    let html = '<div class="folder-container">';
+    // สร้าง HTML แบบแฟ้ม
+    let html = '';
     sortedYears.forEach(year => {
         html += `
             <div class="year-folder">
                 <div class="folder-title">📁 ปีการศึกษาที่จบ: ${year}</div>
                 ${grouped[year].map(student => `
                     <div class="student-item">
-                        <div>
-                            <strong>${student.prefix || ''}${student.firstname || ''} ${student.lastname || ''}</strong><br>
-                            <small style="color:#64748b;">รหัส: ${student.studentId || '-'} | ชั้น: ${student.classroom || '-'} | เลขบัตร: ${student.idCard || '-'}</small>
+                        <div style="line-height: 1.5;">
+                            <strong style="font-size: 1.05rem;">${student.prefix || ''}${student.firstname || ''} ${student.lastname || ''}</strong><br>
+                            <small style="color:#64748b;">รหัส: ${student.studentId || '-'} | ชั้น: ${student.classroom || '-'} | บัตรประชาชน: ${student.idCard || '-'}</small>
                         </div>
-                        ${student.imageUrl ? `<a href="${student.imageUrl}" target="_blank" class="search-custom-btn" style="padding:6px 12px; font-size:12px; text-decoration:none;">ดูใบจบ</a>` : ''}
+                        ${student.imageUrl ? `<a href="${student.imageUrl}" target="_blank" class="search-custom-btn" style="text-decoration:none;">ดูใบจบ</a>` : ''}
                     </div>
                 `).join('')}
             </div>
         `;
     });
-    html += '</div>';
     container.innerHTML = html;
 }
 
