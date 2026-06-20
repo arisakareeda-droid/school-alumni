@@ -22,57 +22,159 @@ const searchBtn = document.getElementById('searchBtn');
 const resultTitle = document.getElementById('resultTitle');
 let allStudents = [];
 
-// -------------------- ฉีด CSS เข้าไปให้หน้าเว็บโดยไม่ต้องแก้ HTML --------------------
-const style = document.createElement('style');
-style.innerHTML = `
-  .folder-container { display: flex; flex-direction: column; gap: 20px; margin-top: 10px; }
-  .year-folder { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); overflow: hidden; border-left: 8px solid #166534; }
-  .folder-title { background: #f1f5f9; padding: 15px 20px; font-size: 1.1rem; font-weight: 700; color: #166534; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; gap: 10px; }
-  .student-item { padding: 15px 20px; border-bottom: 1px solid #f8fafc; display: flex; justify-content: space-between; align-items: center; }
-  .student-item:last-child { border-bottom: none; }
-`;
-document.head.appendChild(style);
-
 // -------------------- Render ฟังก์ชันใหม่ --------------------
 function renderTable(data) {
-    const container = document.getElementById('studentTableBody');
-    if (!container) return;
-    
-    if (data.length === 0) {
-        container.innerHTML = `<p style="text-align:center; padding:40px; color:#64748b;">ไม่พบรายชื่อที่ค้นหา</p>`;
-        return;
+
+  const container = document.getElementById("studentTableBody");
+
+  if (!container) return;
+
+  if (data.length === 0) {
+    container.innerHTML = `
+      <div style="text-align:center;padding:30px;color:#64748b;">
+        ไม่พบข้อมูลที่ค้นหา
+      </div>
+    `;
+    return;
+  }
+
+  const grouped = {};
+
+  data.forEach(student => {
+
+    const year = student.graduateYear || "ไม่ระบุปี";
+
+    if (!grouped[year]) {
+      grouped[year] = [];
     }
 
-    // จัดกลุ่มข้อมูลตามปีการศึกษา
-    const grouped = data.reduce((acc, student) => {
-        const year = student.graduateYear || "ไม่ระบุปี";
-        if (!acc[year]) acc[year] = [];
-        acc[year].push(student);
-        return acc;
-    }, {});
+    grouped[year].push(student);
 
-    // เรียงลำดับปีจากมากไปน้อย
-    const sortedYears = Object.keys(grouped).sort((a, b) => b - a);
+  });
 
-    // สร้าง HTML แบบแฟ้ม
-    let html = '';
-    sortedYears.forEach(year => {
-        html += `
-            <div class="year-folder">
-                <div class="folder-title">ปีการศึกษาที่จบ ${year}</div>
-                ${grouped[year].map(student => `
-                    <div class="student-item">
-                        <div style="line-height: 1.5;">
-                            <strong style="font-size: 1.05rem;">${student.prefix || ''}${student.firstname || ''} ${student.lastname || ''}</strong><br>
-                            <small style="color:#64748b;">รหัส: ${student.studentId || '-'} | ชั้น: ${student.classroom || '-'} | บัตรประชาชน: ${student.idCard || '-'}</small>
-                        </div>
-                        ${student.imageUrl ? `<a href="${student.imageUrl}" target="_blank" class="search-custom-btn" style="text-decoration:none;">ดูใบจบ</a>` : ''}
-                    </div>
-                `).join('')}
-            </div>
-        `;
-    });
-    container.innerHTML = html;
+  const years = Object.keys(grouped).sort((a,b)=>{
+  if(isNaN(a)) return 1;
+  if(isNaN(b)) return -1;
+  return Number(b)-Number(a);
+  });
+
+  let html = "";
+
+  years.forEach((year,index)=>{
+
+    const panelId = `panel-${index}`;
+
+          html += `
+            <div class="alumni-year-folder">
+
+<div class="alumni-folder-title"
+     onclick="toggleYear('${panelId}')">
+
+    <div class="alumni-year-label">
+        ปีการศึกษา ${year}
+    </div>
+
+    <div class="alumni-count-label">
+        ${grouped[year].length} คน
+    </div>
+
+</div>
+
+<div id="${panelId}"
+     class="alumni-folder-content"
+     style="display:none;">
+          `;
+
+          grouped[year]
+            .sort((a,b)=>Number(a.pp1No||0)-Number(b.pp1No||0))
+            .forEach(student=>{
+
+              html += `
+      <div class="student-card">
+
+          <div class="student-header"
+              onclick="toggleStudent('student-${student.id}')">
+
+              <div class="student-name-section">
+
+                  <div class="student-avatar">
+                    ${
+                      student.photoUrl
+                      ? `<img src="${student.photoUrl}" alt="รูปนักเรียน">`
+                      : `👨‍🎓`
+                    }
+                </div>
+
+                  <div>
+
+                      <div class="student-name">
+                          ${student.prefix || ''} ${student.firstname || ''} ${student.lastname || ''}
+                      </div>
+
+                  </div>
+
+              </div>
+
+              <span class="arrow">▾</span>
+
+          </div>
+
+          <div id="student-${student.id}"
+              class="student-detail-box"
+              style="display:none;">
+
+              <div class="detail-row">
+                  <span>ปพ.1 ชุดที่</span>
+                  <strong>${student.pp1Set || '-'}</strong>
+              </div>
+
+              <div class="detail-row">
+                  <span>เลขที่</span>
+                  <strong>${student.pp1No || '-'}</strong>
+              </div>
+
+              <div class="detail-row">
+                  <span>เลขบัตรประชาชน</span>
+                  <strong>${student.idCard || '-'}</strong>
+              </div>
+
+              <div class="detail-row">
+                  <span>รหัสนักเรียน</span>
+                  <strong>${student.studentId || '-'}</strong>
+              </div>
+
+              <div class="detail-row">
+                  <span>ชั้นเรียน</span>
+                  <strong>${student.classroom || '-'}</strong>
+              </div>
+
+              ${
+                student.imageUrl
+                ? `
+                <div class="action-group">
+                  <a href="${student.imageUrl}"
+                    target="_blank"
+                    class="btn-action btn-view">
+                    ดูเอกสาร
+                  </a>
+                </div>
+                `
+                : ""
+              }
+
+          </div>
+
+      </div>
+      `;
+      });
+
+    html += `
+        </div>
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
 }
 
 // -------------------- โหลดข้อมูล --------------------
@@ -95,11 +197,18 @@ function handleSearch() {
   const searchText = searchInput.value.toLowerCase().trim();
   const filtered = allStudents.filter(student => {
     const fullName = `${student.firstname || ''} ${student.lastname || ''}`.toLowerCase();
+    const classroom = (student.classroom || '').toLowerCase();
     const id = (student.studentId || '').toString();
     const year = (student.graduateYear || '').toString();
     const idCard = (student.idCard || '').toString();
     if (searchText === "") return true;
-    return fullName.includes(searchText) || id.includes(searchText) || year.includes(searchText) || idCard.includes(searchText);
+    return (
+    fullName.includes(searchText) ||
+    id.includes(searchText) ||
+    year.includes(searchText) ||
+    idCard.includes(searchText) ||
+    classroom.includes(searchText)
+);
   });
   resultTitle.textContent = 'ผลการค้นหาข้อมูลนักเรียน';
   renderTable(filtered);
@@ -109,5 +218,29 @@ if (searchBtn && searchInput) {
   searchBtn.addEventListener('click', handleSearch);
   searchInput.addEventListener('keyup', (e) => { if (e.key === 'Enter') handleSearch(); });
 }
+
+window.toggleYear = function(id) {
+
+  const el = document.getElementById(id);
+
+  if (!el) return;
+
+  el.style.display =
+    (el.style.display === "none" || el.style.display === "")
+      ? "block"
+      : "none";
+};
+
+window.toggleStudent = function(id) {
+
+  const el = document.getElementById(id);
+
+  if (!el) return;
+
+  el.style.display =
+    el.style.display === "none"
+      ? "block"
+      : "none";
+};
 
 fetchStudents();
