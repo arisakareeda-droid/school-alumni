@@ -38,23 +38,124 @@
         <small>สำนักงานเขตพื้นที่การศึกษาประถมศึกษาสงขลา เขต 3</small>
       </div>
     </div>
-    <div class="nav-bar" style="padding: 20px 0 0px;">
-      <div class="header-container" style="display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
-        <a href="search.html" class="admin-link" style="color: white; text-decoration: none; font-size: 16px; font-weight: 600; background: rgba(255,255,255,0.25); padding: 6px 18px; border-radius: 20px; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">กลับไปหน้าค้นหา</a>
-        <a href="index.html" class="admin-link" style="color: white; text-decoration: none; font-size: 16px; font-weight: 600; background: rgb(240, 8, 8); padding: 6px 18px; border-radius: 20px; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">ออกจากระบบ</a>
-      </div>
-    </div>
+    <div class="header-container"
+     style="display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap:15px;
+            flex-wrap:wrap;">
+
+  <!-- ช่องค้นหา -->
+  <div style="
+    display:flex;
+    gap:10px;
+    flex:1;
+    max-width:700px;
+    padding-left:110px;
+    ">
+    
+    <input type="text"
+       id="searchInput"
+       placeholder="ค้นหาชื่อ นามสกุล เลขบัตร หรือปีที่จบ..."
+       style="
+         flex:1;
+         padding:8px 14px;
+         border:none;
+         border-radius:12px;
+         font-family:'Sarabun',sans-serif;
+         font-size:15px;
+         outline:none;
+         box-shadow:0 2px 8px rgba(0,0,0,.15);
+       ">
+
+    <button id="searchBtn"
+        style="
+          min-width:50px;
+          padding:8px 16px;
+          border:none;
+          border-radius:12px;
+          background:#a1ebff;
+          color:#000;
+          font-size:15px;
+          font-weight:700;
+          cursor:pointer;
+          transition:.25s;
+          box-shadow:0 2px 8px rgba(0,0,0,.15);
+        "
+        onmouseover="this.style.transform='translateY(-2px)'"
+        onmouseout="this.style.transform='translateY(0)'">ค้นหา
+      </button>
+</div>
+
+  <!-- ปุ่มด้านขวา -->
+  <div style="display:flex; gap:10px;">
+    
+    <a href="search.html"
+       style="
+       color:white;
+       text-decoration:none;
+       font-size:16px;
+       font-weight:600;
+       background:rgba(255,255,255,0.25);
+       padding:6px 18px;
+       border-radius:20px;">
+      กลับไปหน้าค้นหา
+    </a>
+
+    <a href="index.html"
+       style="
+       color:white;
+       text-decoration:none;
+       font-size:16px;
+       font-weight:600;
+       background:#ef4444;
+       padding:6px 18px;
+       border-radius:20px;">
+      ออกจากระบบ
+    </a>
+
+  </div>
+
+</div>
   </header>
 
   <main class="main-container">
     <section class="card-section">
-      <div class="card-header" style="background-color: #fef9c3; border-bottom: 2px solid #fef08a; padding: 15px;">
-        <h3 id="formTitle" style="color: #854d0e; margin: 0;">เพิ่มข้อมูลนักเรียนใหม่</h3>
-      </div>
+      <div class="file-header">
+      <div class="card-header" style="background-color: #1e8544; border-bottom: 2px solid #166534; padding: 15px;">
+      <h3 id="listTitle" style="color: #ffffff; margin: 0;">
+      ข้อมูลรายชื่อนักเรียนทั้งหมด
+      </h3>
+</div>
+      <div id="adminStudentTableBody"
+     class="card-body table-responsive folder-container">
+
+  <div style="text-align:center;padding:30px;color:#64748b;">
+    กำลังโหลดข้อมูล...
+  </div>
+
+</div>
+    </section>
+
+    <section class="card-section">
+      <div class="card-header" style="background-color: #755b12; border-bottom: 2px solid #cab81d; padding: 15px;">
+  <h3 id="formTitle" style="color: #ffffff; margin: 0;">เพิ่มข้อมูลนักเรียนใหม่</h3>
+</div>
       <div class="card-body">
         <form id="studentForm">
           <input type="hidden" id="currentDocId"> 
           
+          <div style="display: flex; gap: 15px; width: 100%;">
+            <div class="form-group" style="flex: 1; min-width: 0;">
+              <label>ปพ.1 ชุดที่</label>
+              <input type="text" id="pp1Set" class="login-input" placeholder="ชุดที่">
+            </div>
+            <div class="form-group" style="flex: 1; min-width: 0;">
+              <label>เลขที่</label>
+              <input type="text" id="pp1No" class="login-input" placeholder="เลขที่">
+            </div>
+          </div>
+
           <div class="form-group">
             <label>เลขบัตรประชาชน (13 หลัก)</label>
             <input type="text" id="idCard" class="login-input" required placeholder="กรอกเลขบัตรประชาชน 13 หลัก" maxlength="13">
@@ -90,19 +191,50 @@
           </div>
 
           <div class="form-group">
-            <label>ห้อง (เช่น ป.6/1)</label>
-            <input type="text" id="classroom" class="login-input" placeholder="เช่น ป.6/1">
+            <label>ห้อง </label>
+            <input type="text" id="classroom" class="login-input" placeholder="เช่น ป.6">
           </div>
 
           <div class="form-group">
+            <div class="form-group">
+              <label>รูปนักเรียน</label>
+
+<div class="file-upload-wrapper">
+  <input type="file" id="studentPhoto" accept="image/*">
+</div>
+
+<div id="studentPhotoPreviewContainer"
+     style="margin-top:10px; display:none;">
+  <div id="studentPhotoPreviewContainer"
+     style="
+        margin-top:10px;
+        display:none;
+        justify-content:center;
+        align-items:center;
+     ">
+
+  <img id="studentPhotoPreview"
+      src="#"
+      style="
+          width:180px;
+          height:180px;
+          object-fit:cover;
+          border-radius:10px;
+          border:2px solid #ddd;
+      ">
+</div>
+            </div>
             <label>แนบรูปใบจบการศึกษา</label>
             <div class="file-upload-wrapper">
               <input type="file" id="diplomaFile" accept="image/*">
             </div>
+            <div id="imagePreviewContainer" style="margin-top: 10px; display: none;">
+              <img id="imagePreview" src="#" alt="ตัวอย่างรูป" style="max-width: 100%; height: auto; border-radius: 8px; border: 2px solid #ddd;">
+            </div>
             <small class="form-help">*หากต้องการแก้ไขข้อมูลโดยไม่เปลี่ยนรูป ไม่ต้องเลือกไฟล์ใหม่</small>
           </div>
 
-          <div class="button-group" style="display: flex; flex-direction: column; gap: 10px;">
+          <div class="button-group" style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;">
             <button type="submit" id="submitBtn" class="btn-common btn-submit">บันทึกข้อมูลศิษย์เก่า</button>
             <button type="button" id="cancelBtn" class="btn-common btn-cancel" style="display: none;">ยกเลิกการแก้ไข</button>
           </div>
@@ -110,27 +242,6 @@
       </div>
     </section>
 
-    <section class="card-section">
-      <div class="card-header list-header">
-        <h3>รายชื่อนักเรียนทั้งหมดในระบบ</h3>
-      </div>
-      <div class="card-body table-responsive">
-            <table class="custom-table">
-              <thead>
-                <tr>
-                  <th>เลขบัตรประชาชน</th>
-                  <th>รหัส</th>
-                  <th>ชื่อ-นามสกุล</th> <th>ชั้น/ห้อง</th>
-                  <th>ปีที่จบ</th>
-                  <th style="text-align: center;">จัดการ</th>
-                </tr>
-              </thead>
-            <tbody id="adminStudentTableBody">
-            <tr><td colspan="6" style="text-align: center; color: #64748b; padding: 2rem;">กำลังโหลดข้อมูลหลังบ้าน...</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
   </main>
   <script type="module" src="admin.js"></script>
 </body>
