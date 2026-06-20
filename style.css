@@ -94,11 +94,11 @@ body {
 
 /* จัดเลย์เอาต์หน้าจอหลัก */
 .main-container {
-  width: 92%;
-  max-width: 1200px;
+  width: 95%;
+  max-width: 1400px;
   margin: 2rem auto;
   display: grid;
-  grid-template-columns: 1fr 1.6fr;
+  grid-template-columns: 450px 1fr; /* ฟอร์มกว้างขึ้น */
   gap: 30px;
 }
 
@@ -236,61 +236,506 @@ body {
   overflow-x: auto;
 }
 
+/* --- ส่วนปรับปรุงตารางให้ดูดี --- */
+/* ทำให้ตารางขยายเต็มความกว้างของกล่อง */
 .custom-table {
   width: 100%;
+  table-layout: auto; /* ให้คอลัมน์ปรับขนาดอัตโนมัติตามเนื้อหา */
   border-collapse: collapse;
-  text-align: left;
+}
+
+/* เพิ่ม Padding ให้ตารางดูโปร่งขึ้น */
+.custom-table th, .custom-table td {
+  padding: 16px 12px; /* เพิ่มพื้นที่แนวตั้งและแนวนอน */
   font-size: 14px;
 }
 
+/* ขยายความกว้างคอลัมน์ชื่อ-นามสกุลให้เด่นขึ้น */
+.custom-table th:nth-child(5), .custom-table td:nth-child(5) {
+  min-width: 200px; /* ให้ชื่อแสดงผลได้ยาวขึ้น */
+}
+
+.custom-table thead tr {
+  background: #166534 !important;
+  color: #fff !important;
+}
+
 .custom-table th {
-  background-color: #f1f5f9;
-  color: #475569;
+  padding: 16px 12px;
   font-weight: 600;
-  padding: 12px 10px;
-  border-bottom: 2px solid #e2e8f0;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.5px;
 }
 
 .custom-table td {
-  padding: 12px 10px;
+  padding: 14px 12px;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 14px;
+}
+
+.btn-action{
+  width:100%;
+  min-width:0;
+
+  padding:8px 4px;
+
+  border:none;
+  border-radius:6px;
+
+  font-size:11px;
+  font-weight:600;
+
+  text-align:center;
+  text-decoration:none;
+
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+
+  box-sizing:border-box;
+}
+
+/* สไตล์เมื่อวางเมาส์ */
+.btn-action:hover {
+    background: #f8fafc;
+}
+
+/* ดูเอกสาร */
+.btn-view{
+  background:#2563eb;
+  color:#fff;
+}
+
+.btn-view:hover{
+  background:#1d4ed8;
+}
+
+/* แก้ไข */
+.btn-edit{
+  background:#ca8a04;
+  color:#fff;
+}
+
+.btn-edit:hover{
+  background:#a16207;
+}
+
+/* ลบ */
+.btn-delete{
+  background:#dc2626;
+  color:#fff;
+}
+
+.btn-delete:hover{
+  background:#b91c1c;
+}
+/* --- ปรับแต่งฟอร์มให้ดูทันสมัย --- */
+.card-section {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+}
+
+.card-header {
   border-bottom: 1px solid #e2e8f0;
-  vertical-align: middle;
+  padding: 20px 25px;
 }
 
-.custom-table tr:hover {
-  background-color: #f8fafc;
+/* --- ปรับให้ Responsive ในมือถือได้ดีขึ้น --- */
+@media (max-width: 768px) {
+  .custom-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}
+.folder-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
-/* ปุ่มแก้ไข และ ปุ่มลบ ในตาราง */
-.custom-table .btn-edit {
-  background: #eab308 !important; /* สีเหลืองทอง */
-  color: #000000 !important;
+.folder-content{
+    padding:12px;
+    background:#fff;
+}
+
+.student-item {
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.student-item:last-child {
+  border-bottom: none;
+}
+
+.student-info {
+  flex: 1;
+}
+
+/* ปรับกลุ่มข้อมูลทั้งหมดให้เล็กลง */
+.student-name {
+  font-size: 15px; /* ลดขนาดชื่อให้เล็กลงจากเดิม */
+  margin-bottom: 4px;
+}
+
+.detail-grid {
+  font-size: 12px; /* ปรับขนาดฟอนต์ของรายละเอียดทั้งหมดให้เล็กลง */
+  gap: 2px;        /* ลดช่องว่างระหว่างบรรทัด */
+}
+
+.detail-row {
+  padding: 1px 0;  /* ลดระยะห่างแนวตั้งของแต่ละแถว */
+}
+
+.label {
+  color: #6b7280;
+  font-weight: 400; /* ทำให้ไม่หนา */
+  min-width: 50px;  /* บีบความกว้าง Label ให้เล็กลง */
+}
+
+.value {
+  color: #111827;
+  font-weight: 500;
+}
+.student-detail {
+  font-size: 14px;
+  color: #64748b;
+  margin-top: 4px;
+}
+.detail-row {
+  display: flex;
+  justify-content: flex-start; /* เปลี่ยนจาก space-between เป็น flex-start */
+  gap: 20px;                   /* เพิ่มระยะห่างระหว่างหัวข้อกับค่าที่แสดง */
+  font-size: 14px;
+  padding: 4px 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* เพิ่มการกำหนดความกว้างให้ Label เพื่อให้ข้อมูลฝั่งขวา (Value) ตรงกันทุกแถว */
+.detail-row .label {
+  color: #6b7280;
+  font-weight: 500;
+  min-width: 80px; /* กำหนดความกว้างขั้นต่ำให้ Label เพื่อจัดระเบียบ */
+  flex-shrink: 0;
+}
+
+.detail-row .value {
+  color: #111827;
+  font-weight: 400;
+  text-align: left; /* บังคับให้ข้อความชิดซ้าย แทนการกระโดดไปขวาสุด */
+}
+
+.label {
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.value {
+  color: #111827;
   font-weight: 600;
 }
 
-.custom-table .btn-edit:hover {
-  background: #ca8a04 !important;
+/* เน้นปีการศึกษาให้ใหญ่และเข้ม */
+.year-label {
+  font-size: 17px;
+  font-weight: 700; /* หนาพิเศษ */
+  color: #064e3b;   /* เขียวเข้มขึ้น */
 }
 
-.custom-table .btn-delete {
-  background: #ef4444 !important; /* สีแดง */
+/* ทำให้จำนวนคนดูเบาลง เป็นตัวช่วยเสริม */
+.count-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #475569;   /* สีเทาเข้ม */
+  background: #e2e8f0;
+  padding: 4px 12px;
+  border-radius: 20px; /* ทำเป็นขอบมนคล้ายป้าย Badge */
+}
+/* กล่องปีการศึกษา */
+.year-folder {
+    background: #fff;
+    border-radius: 22px;
+    margin-bottom: px;
+    border: 1px solid #dbe4dc;
+    box-shadow: 0 8px 25px rgba(0,0,0,.06);
+    overflow: hidden;
 }
 
-.custom-table .btn-delete:hover {
-  background: #dc2626 !important;
+/* หัวข้อปีการศึกษา */
+.folder-title{
+    background:#f3f4f6;      /* เทาอ่อน */
+    color:#111827 !important; /* ตัวหนังสือดำ */
+    padding:18px 24px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    cursor:pointer;
+    transition:.3s;
 }
 
-.back-link:hover, .admin-link:hover {
-  background: rgba(255, 255, 255, 0.35) !important;
-  transform: translateY(-1px);
+.folder-title:hover{
+    background:linear-gradient(#f3f4f6);
 }
 
-.custom-table th:nth-child(3) {
-    text-align: center !important;
-    padding-left: 0 !important;
+.student-list{
+    display:none;
+    padding:20px;
+    background:#fafafa;
 }
 
-.custom-table td:nth-child(3) {
-    text-align: left !important;
-    padding-left: 20px !important;
+.student-list.active{
+    display:flex;
+    flex-direction:column;
+    gap:15px;
 }
+
+/* ฝั่งซ้าย ปีการศึกษา */
+.folder-title .year-label{
+    font-size:20px;
+    font-weight:800 !important;  /* บังคับให้หนา */
+    letter-spacing:.5px;
+    color:#111827 !important;    /* ดำสุภาพ */
+}
+
+/* ฝั่งขวา จำนวนคน */
+.folder-title .count-label{
+    background:rgba(255,255,255,.15);
+    color:#fff;
+
+    padding:8px 16px;
+    border-radius:50px;
+
+    font-size:14px;
+    font-weight:600;
+
+    border:1px solid rgba(255,255,255,.25);
+}
+
+/* เนื้อหาภายใน */
+.folder-content{
+    background:#f8fafc;
+    padding:16px;
+}
+
+.student-header{
+  padding:10px 14px;
+  cursor:pointer;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-weight:600;
+  background:#f8fafc;
+  font-size:15px;
+}
+
+.student-detail-box{
+  padding:14px;
+  background:#fff;
+  font-size:14px;
+}
+
+.action-group{
+  display:grid;
+  grid-template-columns:repeat(3, minmax(0,1fr));
+  gap:6px;
+  margin-top:12px;
+  width:100%;
+}
+
+.student-card{
+    background:#ffffff;
+    border:1px solid #e5e7eb;
+    border-radius:18px;
+    margin-bottom:12px;
+    overflow:hidden;
+    box-shadow:0 4px 12px rgba(0,0,0,.08);
+    transition:.3s;
+}
+
+.student-card:hover{
+    transform:translateY(-2px);
+    box-shadow:0 8px 20px rgba(0,0,0,.12);
+}
+
+.student-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 12px 30px rgba(0,0,0,.12);
+}
+
+.student-header{
+    background:#f8fafc;
+
+    padding:12px 18px;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    cursor:pointer;
+}
+
+.student-name-section{
+    display:flex;
+    align-items:center;
+    gap:18px;
+}
+.student-name{
+    font-size:15px;
+    font-weight:700;
+    color:#1e293b;
+}
+
+.student-sub{
+    font-size:14px;
+    color:#64748b;
+    margin-top:3px;
+}
+
+.arrow{
+    font-size:22px;
+    color:#166534;
+}
+
+.student-detail-box{
+    background:#ffffff;
+    padding:16px 20px;
+}
+
+.detail-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:10px 0;
+    border-bottom:1px solid #e2e8f0;
+    font-size:14px;
+}
+
+.action-group{
+    margin-top:20px;
+}
+
+.btn-view{
+    display:inline-block;
+    background:linear-gradient(135deg,#6b7280,#4b5563);
+    color:#fff;
+    text-decoration:none;
+    padding:12px 20px;
+    border-radius:12px;
+    font-weight:600;
+    transition:.3s;
+}
+
+.btn-view:hover{
+    transform:translateY(-2px);
+    box-shadow:0 8px 20px rgba(0,0,0,.2);
+}
+
+.alumni-year-folder{
+    width:100%;
+    max-width:none;
+
+    background:#fff;
+    border-radius:20px;
+    overflow:hidden;
+
+    border:1px solid #d1d5db;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+    transition:.3s;
+}
+
+.alumni-year-folder:hover{
+    transform:translateY(-5px);
+    box-shadow:0 15px 35px rgba(0,0,0,.12);
+}
+
+.alumni-folder-title{
+    background:linear-gradient(135deg,#e5e7eb,#d1d5db);
+    padding:18px 24px;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.alumni-folder-title:hover{
+    background:linear-gradient(135deg,#d1d5db,#9ca3af);
+}
+
+.alumni-year-label{
+    color:#111827;
+    font-size:17px; 
+    font-weight:700;
+}
+
+.alumni-count-label{
+    background:#f3f4f6;
+    color:#111827;
+    padding:8px 18px;
+    border-radius:50px;
+    font-size:15px;
+    font-weight:700;
+    border:1px solid #d1d5db;
+}
+
+.alumni-folder-content{
+    background:#ffffff;
+    padding:18px;
+    border-top:4px solid #9ca3af;
+}
+
+.folder-container{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+}
+
+.alumni-folder-content{
+    background:#f8fafc;
+    padding:16px;
+}
+
+.search-result-name{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    font-size:17px;
+    font-weight:700;
+}
+
+.student-avatar{
+    width:70px;
+    height:90px;
+
+    background:#fff;
+    border:2px solid #d1d5db;
+    border-radius:10px;
+
+    overflow:hidden;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    box-shadow:0 4px 10px rgba(0,0,0,.12);
+}
+
+.student-avatar img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    object-position:center center; /* จัดให้อยู่กึ่งกลาง */
+}
+.card-header.list-header{
+    background:#fffde4;
+}
+
