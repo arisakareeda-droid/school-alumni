@@ -7,61 +7,105 @@ import {
 
 let allStudents = [];
 
-async function loadStudents(){
+async function loadStudents() {
 
-  const querySnapshot = await getDocs(collection(db, "students"));
+    const querySnapshot = await getDocs(collection(db, "students"));
 
-  querySnapshot.forEach((docSnap)=>{
-
-    allStudents.push(docSnap.data());
-
-  });
+    querySnapshot.forEach((docSnap) => {
+        allStudents.push(docSnap.data());
+    });
 
 }
 
 loadStudents();
 
 document.getElementById("searchBtn")
-.addEventListener("click", ()=>{
+.addEventListener("click", () => {
 
-  const input = document
-  .getElementById("searchInput")
-  .value
-  .trim();
+    const input = document
+        .getElementById("searchInput")
+        .value
+        .trim();
 
-  const student = allStudents.find(
-    s => s.idCard === input
-  );
+    const tbody = document.getElementById("studentTableBody");
 
-  const tbody = document.getElementById("studentTableBody");
+    if (input === "") {
 
-  if(student){
+        tbody.innerHTML = `
+        <div class="search-result-card">
+            <div class="search-result-name" style="color:#dc2626;">
+                ❌ กรุณากรอกข้อมูลที่ต้องการค้นหา
+            </div>
+        </div>
+        `;
 
-    tbody.innerHTML = `
-    <tr>
+        return;
+    }
 
-      <td>
-        ${student.prefix}
-        ${student.firstname}
-        ${student.lastname}
-      </td>
+    const results = allStudents.filter(s =>
+        s.idCard?.includes(input) ||
+        s.firstname?.includes(input) ||
+        s.lastname?.includes(input) ||
+        s.graduateYear?.toString().includes(input)
+    );
 
-      <td>${student.classroom}</td>
+    if (results.length > 0) {
 
-      <td>${student.graduateYear}</td>
+        tbody.innerHTML = results.map(student => `
+        <div class="search-result-card">
 
-    </tr>
-    `;
+            <div class="search-result-name">
 
-  } else {
+            <div class="student-photo">
 
-    tbody.innerHTML = `
-    <tr>
-      <td colspan="3">
-        ไม่พบข้อมูล
-      </td>
-    </tr>
-    `;
-  }
+                ${
+                    student.photoUrl
+                    ? `<img src="${student.photoUrl}" alt="">`
+                    : `👤`
+                }
+
+            </div>
+
+            <div>
+
+                ${student.prefix || ""}
+                ${student.firstname || ""}
+                ${student.lastname || ""}
+
+            </div>
+
+           </div>
+
+            <div class="search-result-row">
+                🪪 เลขบัตรประชาชน : ${student.idCard || "-"}
+            </div>
+
+            <div class="search-result-row">
+                🏫 ชั้นเรียน : ${student.classroom || "-"}
+            </div>
+
+            <div class="search-result-row">
+                🎓 ปีที่จบ : ${student.graduateYear || "-"}
+            </div>
+
+        </div>
+        `).join("");
+
+    } else {
+
+        tbody.innerHTML = `
+        <div class="search-result-card">
+
+            <div class="search-result-name" style="color:#dc2626;">
+                ❌ ไม่พบข้อมูล
+            </div>
+
+            <div class="search-result-row">
+                ไม่พบข้อมูลที่ค้นหาในระบบ
+            </div>
+
+        </div>
+        `;
+    }
 
 });
